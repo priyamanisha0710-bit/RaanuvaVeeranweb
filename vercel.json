@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/military/:path*",
+      "destination": "https://api.codingboss.in/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
