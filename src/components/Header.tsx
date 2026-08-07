@@ -39,7 +39,7 @@ export default function Header() {
       {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-purple-900/80 backdrop-blur-md shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 gap-6">
             <Link to="/" className="flex items-center gap-2">
               <div className="flex items-center">
                 <img
@@ -58,51 +58,46 @@ export default function Header() {
 
               </div>
 
-              <span className="text-xl font-bold text-white">{t('heroTitle1')}</span>
+              <span className={`font-bold text-white ${language === 'ta' ? 'text-base sm:text-lg' : 'text-xl'}`}>{t('heroTitle1')}</span>
             </Link>
 
             {/* Desktop Menu */}
-            <nav className="hidden md:flex items-center gap-8 text-white">
+            <nav className={`hidden md:flex items-center text-white ${language === 'ta' ? 'gap-4 text-sm' : 'gap-8'}`}>
               <Link
                 to="/"
-                className={`${isActive("/") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium`}
+                className={`${isActive("/") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium whitespace-nowrap`}
               >
                 {t('home')}
               </Link>
               <Link
                 to="/about"
-                className={`${isActive("/about") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium`}
+                className={`${isActive("/about") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium whitespace-nowrap`}
               >
                 {t('about')}
               </Link>
               <Link
                 to="/courses"
-                className={`${isActive("/courses") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium`}
+                className={`${isActive("/courses") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium whitespace-nowrap`}
               >
                 {t('courses')}
               </Link>
               <Link
                 to="/teachers"
-                className={`${isActive("/teachers") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium`}
+                className={`${isActive("/teachers") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium whitespace-nowrap`}
               >
                 {t('teachers')}
               </Link>
-              <Link
-                to="/blog"
-                className={`${isActive("/blog") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium`}
-              >
-                {t('blog')}
-              </Link>
+
               <Link
                 to="/contact"
-                className={`${isActive("/contact") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium`}
+                className={`${isActive("/contact") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium whitespace-nowrap`}
               >
                 {t('contact')}
               </Link>
               {isLoggedIn && (
                 <Link
                   to="/live-class"
-                  className={`${isActive("/live-class") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium flex items-center gap-2`}
+                  className={`${isActive("/live-class") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium whitespace-nowrap flex items-center gap-2`}
                 >
                   {t('liveClass')}
                 </Link>
@@ -110,7 +105,7 @@ export default function Header() {
               {isLoggedIn && (
                 <Link
                   to="/meeting"
-                  className={`${isActive("/meeting") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium flex items-center gap-2`}
+                  className={`${isActive("/meeting") ? "text-purple-300" : "hover:text-purple-300"} transition-colors font-medium whitespace-nowrap flex items-center gap-2`}
                 >
                   {t('meetingEngine')}
                   {isLiveActive && (
@@ -128,7 +123,7 @@ export default function Header() {
               <div className="flex items-center bg-white/10 p-1 rounded-full backdrop-blur-sm border border-white/10">
                 <button
                   onClick={() => setLanguage('en')}
-                  className={`px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${
+                  className={`flex items-center justify-center leading-none px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${
                     language === 'en'
                       ? 'bg-emerald-500 text-white shadow-md'
                       : 'text-white/70 hover:text-white'
@@ -138,7 +133,7 @@ export default function Header() {
                 </button>
                 <button
                   onClick={() => setLanguage('ta')}
-                  className={`px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${
+                  className={`flex items-center justify-center leading-none px-3 py-1 rounded-full text-sm font-bold transition-all duration-300 ${
                     language === 'ta'
                       ? 'bg-emerald-500 text-white shadow-md'
                       : 'text-white/70 hover:text-white'
@@ -252,13 +247,7 @@ export default function Header() {
                 >
                   {t('teachers')}
                 </Link>
-                <Link
-                  to="/blog"
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`${isActive("/blog") ? "text-purple-300" : "hover:text-purple-300"} py-2`}
-                >
-                  {t('blog')}
-                </Link>
+
                 <Link
                   to="/contact"
                   onClick={() => setIsMenuOpen(false)}

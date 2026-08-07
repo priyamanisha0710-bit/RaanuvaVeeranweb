@@ -118,13 +118,13 @@ export default function AboutPage() {
         <div ref={storyRef} className="grid md:grid-cols-2 gap-8 sm:gap-12 items-center mb-12 sm:mb-20">
           <div className={storyInView ? 'animate-fade-left' : 'opacity-0'}>
             <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6">{t('ourStoryTitle')}</h2>
-            <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed text-justify break-words">
+            <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed text-justify break-words hyphens-auto">
               {t('ourStoryP1')}
             </p>
-            <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed text-justify break-words">
+            <p className="text-sm sm:text-base text-gray-600 mb-4 leading-relaxed text-justify break-words hyphens-auto">
               {t('ourStoryP2')}
             </p>
-            <p className="text-sm sm:text-base text-gray-600 leading-relaxed text-justify break-words">
+            <p className="text-sm sm:text-base text-gray-600 leading-relaxed text-justify break-words hyphens-auto">
               {t('ourStoryP3')}
             </p>
           </div>
