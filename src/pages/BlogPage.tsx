@@ -339,7 +339,10 @@ export default function BlogPage() {
                     </div>
                   </div>
 
-                  <button className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-pink-500 text-white px-8 py-4 rounded-full font-bold text-base sm:text-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2">
+                  <button 
+                    onClick={() => alert('Full article coming soon!')}
+                    className="w-full sm:w-auto bg-gradient-to-r from-orange-500 to-pink-500 text-white px-8 py-4 rounded-full font-bold text-base sm:text-lg hover:shadow-xl transition-all transform hover:scale-105 flex items-center justify-center gap-2"
+                  >
                     {t('readFullArticleBtn')}
                     <ArrowRight className="w-5 h-5" />
                   </button>
@@ -449,7 +452,10 @@ export default function BlogPage() {
                         <span>{post.views}</span>
                       </div>
                     </div>
-                    <button className="flex items-center gap-2 text-orange-500 font-semibold hover:gap-3 transition-all text-sm">
+                    <button 
+                      onClick={() => alert('Full article coming soon!')}
+                      className="flex items-center gap-2 text-orange-500 font-semibold hover:gap-3 transition-all text-sm"
+                    >
                       {t('readBtn')}
                       <ArrowRight className="w-4 h-4" />
                     </button>

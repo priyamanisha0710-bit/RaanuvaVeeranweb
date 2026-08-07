@@ -1,4 +1,5 @@
 import { Award, BookOpen, Users, Star, Linkedin, Mail, GraduationCap, Trophy, MessageCircle, Target, Globe, Video, Calendar } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../context/LanguageContext';
 
@@ -193,6 +194,7 @@ function AnimatedSection({ children, direction = 'left', className = '' }: { chi
 
 export default function TeachersPage() {
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const stats = getStats(t);
   const teachers = getTeachers(t);
   const features = getFeatures(t);
@@ -307,7 +309,10 @@ export default function TeachersPage() {
                     </div>
 
                     <div className="flex gap-3">
-                      <button className="flex-1 bg-orange-500 text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base">
+                      <button 
+                        onClick={() => navigate('/contact')}
+                        className="flex-1 bg-orange-500 text-white py-2 rounded-lg font-semibold hover:bg-orange-600 transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                      >
                         <Mail className="w-3 h-3 sm:w-4 sm:h-4" />
                         {t('contactBtn')}
                       </button>
