@@ -46,7 +46,7 @@ export default function Header() {
                   src="/indian-flag.jpg"
                   alt="Raanuva Veeran Logo"
                   className="
-    w-12 h-12              /* Mobile */
+    w-24 h-24              /* Mobile */
     sm:w-16 sm:h-16        /* Small screens */
     md:w-20 md:h-20        /* Tablet */
     lg:w-28 lg:h-28        /* Desktop */
