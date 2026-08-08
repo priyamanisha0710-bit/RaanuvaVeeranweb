@@ -15,6 +15,7 @@ import ExpensesTab from "./ExpensesTab";
 import BalanceSheetTab from "./BalanceSheetTab";
 import PaymentDetailsTab from "./PaymentDetailsTab";
 import { useEngineerData } from "../../hooks/useEngineerData";
+import { useLanguage } from "../../context/LanguageContext";
 
 type SubTab = "create_engineer" | "pay_out" | "advance" | "expenses" | "payment_details" | "balance_sheet";
 
@@ -22,13 +23,15 @@ const ManpowerSection: React.FC = () => {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>("create_engineer");
   const { loading, error, refreshData } = useEngineerData();
 
+  const { t } = useLanguage();
+
   const tabs: { id: SubTab; label: string; description: string; icon: React.ElementType }[] = [
-    { id: "create_engineer", label: "Create Engineer & Site", description: "Create engineers, sites and workers", icon: UserPlus },
-    { id: "pay_out", label: "Site Bill", description: "Weekly payout and settlement view", icon: Wallet },
-    { id: "advance", label: "Advance", description: "Track worker advance amounts", icon: TrendingUp },
-    { id: "payment_details", label: "Pay Out Details", description: "Individual labour payment settlements", icon: History },
-    { id: "expenses", label: "Expenses", description: "Manage site and company expenses", icon: ShoppingCart },
-    { id: "balance_sheet", label: "Balance Sheet", description: "Review financial summary and cash flow", icon: LayoutDashboard },
+    { id: "create_engineer", label: t('msTabCreateEng'), description: t('msDescCreateEng'), icon: UserPlus },
+    { id: "pay_out", label: t('msTabPayOut'), description: t('msDescPayOut'), icon: Wallet },
+    { id: "advance", label: t('msTabAdvance'), description: t('msDescAdvance'), icon: TrendingUp },
+    { id: "payment_details", label: t('msTabPayment'), description: t('msDescPayment'), icon: History },
+    { id: "expenses", label: t('msTabExpenses'), description: t('msDescExpenses'), icon: ShoppingCart },
+    { id: "balance_sheet", label: t('msTabBalance'), description: t('msDescBalance'), icon: LayoutDashboard },
   ];
 
   const activeTabConfig = tabs.find((tab) => tab.id === activeSubTab);
@@ -41,7 +44,7 @@ const ManpowerSection: React.FC = () => {
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-indigo-500/80">
-                Manpower Control
+                {t('msControl')}
               </p>
               <h2 className="mt-2 text-2xl md:text-3xl font-black tracking-tight text-slate-900 dark:text-white">
                 {activeTabConfig?.label}

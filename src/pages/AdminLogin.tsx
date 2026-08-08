@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Mail, ChevronRight, ShieldCheck } from "lucide-react";
 import PremiumBackground from "../components/admin/PremiumBackground";
+import { useLanguage } from "../context/LanguageContext";
 
 const AdminLogin: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,13 +65,13 @@ const AdminLogin: React.FC = () => {
             >
               <ShieldCheck className="w-10 h-10" />
             </motion.div>
-            <h2 className="text-3xl font-black text-white tracking-tight mb-2">Admin Portal</h2>
-            <p className="text-indigo-200/50 text-sm font-medium uppercase tracking-[0.2em]">Secure Authentication</p>
+            <h2 className="text-3xl font-black text-white tracking-tight mb-2">{t('adminLogPortal')}</h2>
+            <p className="text-indigo-200/50 text-sm font-medium uppercase tracking-[0.2em]">{t('adminLogSecureAuth')}</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
             <div className="space-y-2">
-              <label className="text-xs font-bold text-indigo-300/60 uppercase tracking-widest ml-1">Email System</label>
+              <label className="text-xs font-bold text-indigo-300/60 uppercase tracking-widest ml-1">{t('adminLogEmail')}</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Mail className="w-5 h-5 text-indigo-400/40 group-focus-within:text-indigo-400 transition-colors" />
@@ -77,7 +79,7 @@ const AdminLogin: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="admin@gmail.com"
+                  placeholder={t('adminLogEmailPlaceholder')}
                   className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white placeholder-indigo-300/20 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500/50 transition-all text-lg"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -86,7 +88,7 @@ const AdminLogin: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <label className="text-xs font-bold text-indigo-300/60 uppercase tracking-widest ml-1">Master Password</label>
+              <label className="text-xs font-bold text-indigo-300/60 uppercase tracking-widest ml-1">{t('adminLogMasterPassword')}</label>
               <div className="relative group">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                   <Lock className="w-5 h-5 text-indigo-400/40 group-focus-within:text-indigo-400 transition-colors" />
@@ -117,7 +119,7 @@ const AdminLogin: React.FC = () => {
                   />
                 ) : (
                   <>
-                    <span className="text-lg uppercase tracking-wider">Access Panel</span>
+                    <span className="text-lg uppercase tracking-wider">{t('adminLogAccessPanel')}</span>
                     <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </>
                 )}
@@ -129,7 +131,7 @@ const AdminLogin: React.FC = () => {
           </form>
 
           <p className="mt-10 text-center text-sm text-indigo-200/30">
-            System version 2.4.0 • Build 829
+            {t('adminLogSysVersion')}
           </p>
         </div>
       </motion.div>

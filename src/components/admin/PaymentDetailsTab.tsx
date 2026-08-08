@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLanguage } from "../../context/LanguageContext";
 import { 
   UserCircle, 
   MapPin, 
@@ -54,6 +55,7 @@ interface PaymentRecord {
 }
 
 const PaymentDetailsTab: React.FC = () => {
+  const { t } = useLanguage();
   const [isFetchingAssignments, setIsFetchingAssignments] = useState(false);
   const [assignments, setAssignments] = useState<any[]>([]);
   const [payoutHistory, setPayoutHistory] = useState<any[]>([]);
@@ -137,7 +139,7 @@ const PaymentDetailsTab: React.FC = () => {
       engineer: eng,
       site: site,
       period: `Week Starting: ${start}`,
-      tableHead: [["Labour Name", "Role", ...dayHeaders, "Total", "Rate", "Amount"]],
+      tableHead: [[t("pdLabourName"), "Role", ...dayHeaders, "Total", "Rate", "Amount"]],
       tableBody: [[
         name,
         role,
@@ -174,7 +176,7 @@ const PaymentDetailsTab: React.FC = () => {
       engineer: eng,
       site: site,
       period: `Week Starting: ${start}`,
-      tableHead: [["Labour Name", "Role", ...dayHeaders, "Total", "Rate", "Amount"]],
+      tableHead: [[t("pdLabourName"), "Role", ...dayHeaders, "Total", "Rate", "Amount"]],
       tableBody: [[
         name,
         role,
@@ -210,14 +212,14 @@ const PaymentDetailsTab: React.FC = () => {
   };
 
   const handleDeletePayout = async (id: any) => {
-    if (!window.confirm("Permanently delete this payout record from the cloud?")) return;
+    if (!window.confirm(t("pdConfirmDelete"))) return;
     try {
       await apiService.deleteWeeklyLog(id);
-      alert("Payout record successfully deleted!");
+      alert(t("pdDeleteSuccess"));
       await fetchAllData();
     } catch (err) {
       console.error("Delete failed:", err);
-      alert("Error: Could not delete record.");
+      alert(t("pdDeleteError"));
     }
   };
 
@@ -225,7 +227,7 @@ const PaymentDetailsTab: React.FC = () => {
     fetchAllData();
   }, []);
 
-  // Advanced Auto-fill logic when Labour ID is entered
+  // Advanced Auto-fill logic when {t("pdLabourId")} is entered
   useEffect(() => {
     if (formData.labourId) {
       const labourIdLower = formData.labourId.toLowerCase();
@@ -338,7 +340,7 @@ const PaymentDetailsTab: React.FC = () => {
   };
 
   const handleAddRecord = () => {
-    if (!formData.labourName || !formData.site) return alert("Please fill in essential details.");
+    if (!formData.labourName || !formData.site) return alert(t("pdFillEssential"));
     
     setBillRecords(prev => [...prev, { 
       ...formData, 
@@ -358,7 +360,7 @@ const PaymentDetailsTab: React.FC = () => {
   };
 
   const handleSaveBill = async () => {
-    if (billRecords.length === 0) return alert("No records to save.");
+    if (billRecords.length === 0) return alert(t("pdNoRecordsToSave"));
 
     try {
       setIsSaving(true);
@@ -372,7 +374,7 @@ const PaymentDetailsTab: React.FC = () => {
         }
 
         if (!finalId) {
-          throw new Error(`Worker ID not found for ${record.labourName}. Please enter a valid Labour ID.`);
+          throw new Error(`Worker ID not found for ${record.labourName}. Please enter a valid {t("pdLabourId")}.`);
         }
 
         const payload = {
@@ -396,10 +398,10 @@ const PaymentDetailsTab: React.FC = () => {
       await Promise.all(promises);
       setBillRecords([]);
       await fetchAllData();
-      alert("All Payout Records saved successfully!");
+      alert(t("pdSaveSuccess"));
     } catch (e) {
       console.error(e);
-      alert("Failed to save some records. Please try again.");
+      alert(t("pdSaveError"));
     } finally {
       setIsSaving(false);
     }
@@ -445,7 +447,7 @@ const PaymentDetailsTab: React.FC = () => {
       engineer: billRecords[0]?.engineerName || formData.engineerName || "N/A",
       site,
       period: `Period: ${weekStartDate} to ${weekEndDate}`,
-      tableHead: [["Labour Name", "Role", "Duties", "Rate", "Wages", "Advance", "Net Pay"]],
+      tableHead: [[t("pdLabourName"), "Role", "Duties", "Rate", "Wages", "Advance", "Net Pay"]],
       tableBody,
       tableFooter: ["GRAND TOTAL", "", "", "", "", "", `₹${grandTotal.toLocaleString()}`]
     };
@@ -453,7 +455,7 @@ const PaymentDetailsTab: React.FC = () => {
 
   const handlePrint = () => {
     const data = generateReportData();
-    if (data.tableBody.length === 0) return alert("Please add records first.");
+    if (data.tableBody.length === 0) return alert(t("pdAddRecordsFirst"));
     const doc = generateProfessionalPDF(data);
     doc.autoPrint();
     window.open(doc.output('bloburl'), '_blank');
@@ -461,7 +463,7 @@ const PaymentDetailsTab: React.FC = () => {
 
   const handleWhatsApp = async () => {
     const data = generateReportData();
-    if (data.tableBody.length === 0) return alert("Please add records first.");
+    if (data.tableBody.length === 0) return alert(t("pdAddRecordsFirst"));
     const doc = generateProfessionalPDF(data);
     const grandTotal = billRecords.reduce((sum, r) => sum + r.netPayment, 0);
     const summary = `*Payment Settlement - ${data.site}*\n*Period:* ${weekStartDate} to ${weekEndDate}\n*Grand Total: ₹${grandTotal.toLocaleString()}*`;
@@ -469,7 +471,7 @@ const PaymentDetailsTab: React.FC = () => {
   };
 
   const handlePrintOverallHistory = () => {
-    if (filteredPayoutHistory.length === 0) return alert("No payout history records to print.");
+    if (filteredPayoutHistory.length === 0) return alert(t("pdNoHistoryToPrint"));
 
     const tableBody = filteredPayoutHistory.slice().reverse().map((pay: any, idx: number) => {
       const name = pay.labour_name || pay.person_name || pay.name || "-";
@@ -502,7 +504,7 @@ const PaymentDetailsTab: React.FC = () => {
       title: selectedSite === "All" ? "Overall Payout Settlements" : `Payout Settlements - ${selectedSite}`,
       site: selectedSite === "All" ? "All Sites" : selectedSite,
       period: `Generated on: ${new Date().toLocaleDateString("en-GB")}`,
-      tableHead: [["No", "Labour Name", "Role", "Site", "Settlement Date", "Duties", "Rate", "Net Payment"]],
+      tableHead: [["No", t("pdLabourName"), "Role", "Site", "Settlement Date", "Duties", "Rate", "Net Payment"]],
       tableBody,
       tableFooter: ["TOTALS", "", "", "", "", "", "", `₹${grandTotal.toLocaleString()}`],
       filename: selectedSite === "All" ? "Payout_Settlements_Report" : `Payout_Settlements_${selectedSite}`
@@ -512,7 +514,7 @@ const PaymentDetailsTab: React.FC = () => {
   };
 
   const handleWhatsAppOverallHistory = async () => {
-    if (filteredPayoutHistory.length === 0) return alert("No payout history records to share.");
+    if (filteredPayoutHistory.length === 0) return alert(t("pdNoHistoryToShare"));
 
     const tableBody = filteredPayoutHistory.slice().reverse().map((pay: any, idx: number) => {
       const name = pay.labour_name || pay.person_name || pay.name || "-";
@@ -545,7 +547,7 @@ const PaymentDetailsTab: React.FC = () => {
       title: selectedSite === "All" ? "Overall Payout Settlements" : `Payout Settlements - ${selectedSite}`,
       site: selectedSite === "All" ? "All Sites" : selectedSite,
       period: `Generated on: ${new Date().toLocaleDateString("en-GB")}`,
-      tableHead: [["No", "Labour Name", "Role", "Site", "Settlement Date", "Duties", "Rate", "Net Payment"]],
+      tableHead: [["No", t("pdLabourName"), "Role", "Site", "Settlement Date", "Duties", "Rate", "Net Payment"]],
       tableBody,
       tableFooter: ["TOTALS", "", "", "", "", "", "", `₹${grandTotal.toLocaleString()}`],
       filename: selectedSite === "All" ? "Payout_Settlements_Report" : `Payout_Settlements_${selectedSite}`
@@ -571,16 +573,16 @@ const PaymentDetailsTab: React.FC = () => {
               <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
                 <CreditCard className="w-6 h-6 text-white" />
               </div>
-              Pay Out Details
+              {t("pdPaymentDetailsTitle")}
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Cross-referencing logs with final settlements</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">{t("pdSubtitle")}</p>
           </div>
 
           <div className="h-12 w-px bg-slate-100 dark:bg-slate-800 hidden md:block" />
 
           <div className="flex items-center gap-4">
             <div className="space-y-1">
-              <label className="text-[10px] font-black uppercase tracking-widest text-indigo-500">History From</label>
+              <label className="text-[10px] font-black uppercase tracking-widest text-indigo-500">{t("pdHistoryFrom")}</label>
               <input
                 type="date"
                 className="bg-slate-50 dark:bg-slate-900 border-none rounded-xl px-4 py-2 text-xs font-bold text-slate-800 dark:text-white cursor-pointer"
@@ -600,7 +602,7 @@ const PaymentDetailsTab: React.FC = () => {
               onChange={(e) => setSelectedSite(e.target.value)}
               className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs font-bold text-slate-600 dark:text-slate-200 hover:text-indigo-600 transition-all cursor-pointer shadow-sm pr-10 appearance-none min-w-[160px]"
             >
-              <option value="All">All Site Locations</option>
+              <option value="All">{t("pdAllSites")}</option>
               {uniqueSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -615,7 +617,7 @@ const PaymentDetailsTab: React.FC = () => {
             onClick={handlePrintOverallHistory}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Printer className="w-4 h-4" /> Print Overall
+            <Printer className="w-4 h-4" /> {t("pdPrintAllBtn")}
           </button>
 
           {/* Share Overall to WhatsApp */}
@@ -623,13 +625,13 @@ const PaymentDetailsTab: React.FC = () => {
             onClick={handleWhatsAppOverallHistory}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Share2 className="w-4 h-4" /> Share Overall
+            <Share2 className="w-4 h-4" /> {t("pdShareAllBtn")}
           </button>
 
           {/* Total Value Block */}
           <div className="bg-indigo-50 dark:bg-indigo-500/10 px-6 py-2.5 rounded-2xl flex items-center gap-4 border border-indigo-100 dark:border-indigo-500/20 shadow-sm">
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Total Payout</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">{t("pdTotalAmount")}</p>
               <p className="text-sm font-black text-indigo-600 dark:text-indigo-400">₹ {filteredPayoutHistory.reduce((sum: number, pay: any) => {
                 const net = pay.final_payout_amount || pay.net_payment || pay.amount || 0;
                 return sum + Number(net);
@@ -646,13 +648,13 @@ const PaymentDetailsTab: React.FC = () => {
       <div className="bg-white dark:bg-slate-900/60 rounded-[2.5rem] p-8 md:p-10 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-black/20 relative">
         <div className="absolute top-4 right-8 flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Log-Sync Active</span>
+          <span className="text-[10px] font-black uppercase tracking-widest text-indigo-500">{t("pdSyncActive")}</span>
         </div>
 
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Payment Entry</h3>
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t("pdPaymentEntry")}</h3>
           </div>
           
           <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-700/50">
@@ -669,10 +671,10 @@ const PaymentDetailsTab: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {/* Labour ID */}
+          {/* {t("pdLabourId")} */}
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-indigo-600 flex items-center gap-2 ml-1">
-              <Hash className="w-3.5 h-3.5" /> Labour ID
+              <Hash className="w-3.5 h-3.5" /> {t("pdLabourId")}
             </label>
             <div className="relative">
               <input
@@ -680,7 +682,7 @@ const PaymentDetailsTab: React.FC = () => {
                 className="w-full bg-indigo-50/30 dark:bg-slate-800 border-2 border-indigo-100 dark:border-indigo-900/30 rounded-xl p-4 text-sm font-black text-indigo-600 dark:text-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none"
                 value={formData.labourId}
                 onChange={e => setFormData(prev => ({ ...prev, labourId: e.target.value }))}
-                placeholder="Enter ID (e.g. 001)"
+                placeholder={t("pdLabourIdPlaceholder")}
               />
               {(isFetchingAssignments || isFetchingHistory) && <Loader2 className="w-4 h-4 absolute right-4 top-4 animate-spin text-indigo-500" />}
               <Zap className="w-3 h-3 absolute right-12 top-5 text-amber-500" />
@@ -689,40 +691,40 @@ const PaymentDetailsTab: React.FC = () => {
 
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <UserCircle className="w-3.5 h-3.5" /> Labour Name
+              <UserCircle className="w-3.5 h-3.5" /> {t("pdLabourName")}
             </label>
             <input
               type="text"
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white shadow-inner"
               value={formData.labourName}
               onChange={e => setFormData(prev => ({ ...prev, labourName: e.target.value }))}
-              placeholder="Name"
+              placeholder={t("pdNamePlaceholder")}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <MapPin className="w-3.5 h-3.5" /> Site
+              <MapPin className="w-3.5 h-3.5" /> {t("pdSite")}
             </label>
             <input
               type="text"
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white shadow-inner"
               value={formData.site}
               onChange={e => setFormData(prev => ({ ...prev, site: e.target.value }))}
-              placeholder="Site"
+              placeholder={t("pdSitePlaceholder")}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <Briefcase className="w-3.5 h-3.5" /> Category
+              <Briefcase className="w-3.5 h-3.5" /> {t("pdCategory")}
             </label>
             <input
               type="text"
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white shadow-inner"
               value={formData.category}
               onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-              placeholder="Role"
+              placeholder={t("pdRolePlaceholder")}
             />
           </div>
         </div>
@@ -753,7 +755,7 @@ const PaymentDetailsTab: React.FC = () => {
               ))}
             </div>
             <div className="mt-6 flex justify-between items-center px-2">
-               <span className="text-[10px] font-black text-slate-400 uppercase">Total Logged Duties</span>
+               <span className="text-[10px] font-black text-slate-400 uppercase">{t("pdTotalDuties")}</span>
                <span className="text-sm font-black text-indigo-600">{formData.totalDuties}</span>
             </div>
           </div>
@@ -761,7 +763,7 @@ const PaymentDetailsTab: React.FC = () => {
           <div className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-500">Rate per Duty</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-indigo-500">{t("pdRatePerDuty")}</label>
                 <input
                   type="number"
                   className="w-full bg-white dark:bg-slate-900 border-none rounded-xl p-4 text-sm font-black text-indigo-600 shadow-sm"
@@ -771,7 +773,7 @@ const PaymentDetailsTab: React.FC = () => {
                 />
               </div>
               <div className="space-y-2">
-                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">Gross Wages</label>
+                <label className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t("pdTotalWages")}</label>
                 <div className="w-full bg-slate-50 dark:bg-slate-900 rounded-xl p-4 text-sm font-black text-slate-600 border border-slate-100 dark:border-slate-800 shadow-inner">
                   ₹ {formData.totalAmount.toLocaleString()}
                 </div>
@@ -780,14 +782,14 @@ const PaymentDetailsTab: React.FC = () => {
 
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-rose-500 flex items-center gap-2">
-                <CreditCard className="w-3.5 h-3.5" /> Advance Amount to Deduct (₹)
+                <CreditCard className="w-3.5 h-3.5" /> {t("pdAdvanceAmountDeduct")}
               </label>
               <input
                 type="number"
                 className="w-full bg-white dark:bg-slate-900 border-2 border-rose-100 dark:border-rose-900/30 rounded-2xl p-4 text-lg font-black text-rose-600 shadow-lg focus:ring-4 focus:ring-rose-500/10 outline-none transition-all"
                 value={formData.advance || ""}
                 onChange={e => setFormData(prev => ({ ...prev, advance: parseFloat(e.target.value) || 0 }))}
-                placeholder="Enter Amount"
+                placeholder={t("pdEnterAmount")}
               />
             </div>
           </div>
@@ -796,15 +798,15 @@ const PaymentDetailsTab: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-100 dark:border-slate-800">
            <div className="flex items-center gap-4">
               <div className="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700">
-                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Weekly Gross</p>
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{t("pdWeeklyTotal")}</p>
                 <p className="text-xl font-black text-slate-800 dark:text-white">₹ {formData.totalAmount.toLocaleString()}</p>
               </div>
               <div className="p-4 bg-rose-50 dark:bg-rose-500/10 rounded-2xl border border-rose-100 dark:border-rose-500/20">
-                <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-1">Deduction</p>
+                <p className="text-[9px] font-black text-rose-400 uppercase tracking-widest mb-1">{t("pdDeduction")}</p>
                 <p className="text-xl font-black text-rose-600">₹ {Number(formData.advance).toLocaleString()}</p>
               </div>
               <div className="p-5 bg-emerald-600 rounded-2xl shadow-xl shadow-emerald-600/30 min-w-[200px] text-center">
-                <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">Final Net Payable</p>
+                <p className="text-[10px] font-black text-white/60 uppercase tracking-widest mb-1">{t("pdFinalNetPayable")}</p>
                 <p className="text-2xl font-black text-white">₹ {formData.netPayment.toLocaleString()}</p>
               </div>
            </div>
@@ -813,8 +815,7 @@ const PaymentDetailsTab: React.FC = () => {
             onClick={handleAddRecord}
             className="w-full md:w-auto bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-10 py-5 rounded-3xl font-black uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-2xl active:scale-95"
           >
-            <Plus className="w-4 h-4" /> Add Settlement
-          </button>
+            <Plus className="w-4 h-4" />{t("pdAddSettlement")}</button>
         </div>
       </div>
 
@@ -823,24 +824,24 @@ const PaymentDetailsTab: React.FC = () => {
         <div className="bg-white dark:bg-slate-900/60 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden animate-slide-up">
           <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/30">
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
-              <TrendingUp className="w-4 h-4 text-indigo-500" /> Current Payout List 
+              <TrendingUp className="w-4 h-4 text-indigo-500" /> {t("pdCurrentPaymentList")} 
             </h3>
             <div className="flex gap-2">
-              <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 hover:text-indigo-600 transition-all font-black text-[9px] uppercase tracking-widest border border-slate-100 dark:border-slate-700 shadow-sm"><Printer className="w-3.5 h-3.5" /> Full Print</button>
-              <button onClick={handleWhatsApp} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all font-black text-[9px] uppercase tracking-widest border border-emerald-100 shadow-sm"><Share2 className="w-3.5 h-3.5" /> Full WhatsApp</button>
+              <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 hover:text-indigo-600 transition-all font-black text-[9px] uppercase tracking-widest border border-slate-100 dark:border-slate-700 shadow-sm"><Printer className="w-3.5 h-3.5" /> {t("pdFullPrint")}</button>
+              <button onClick={handleWhatsApp} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all font-black text-[9px] uppercase tracking-widest border border-emerald-100 shadow-sm"><Share2 className="w-3.5 h-3.5" /> {t("pdFullWhatsApp")}</button>
             </div>
           </div>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Labour Detail</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Duties</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Gross Wages</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Advance</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Net Payment</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+              <tr className="bg-slate-50/50 dark:bg-slate-800/30">
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("pdLabourDetails")}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t("pdDuties")}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t("pdTotalWages")}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t("pdAdvance")}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t("pdNetPayment")}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t("pdActions")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -873,9 +874,9 @@ const PaymentDetailsTab: React.FC = () => {
                     </td>
                     <td className="p-6 text-center">
                       <div className="flex items-center justify-center gap-1">
-                        <button onClick={() => handlePrintSingle(record)} className="p-2 text-slate-300 hover:text-indigo-500 transition-colors" title="Print Single"><Printer className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => handleWhatsAppSingle(record)} className="p-2 text-slate-300 hover:text-emerald-500 transition-colors" title="WhatsApp Single"><Share2 className="w-3.5 h-3.5" /></button>
-                        <button onClick={() => removeRecord(record.id!)} className="p-2 text-slate-300 hover:text-rose-500 transition-colors" title="Remove"><Trash2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => handlePrintSingle(record)} className="p-2 text-slate-300 hover:text-indigo-500 transition-colors" title={t("pdPrintSingle")}><Printer className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => handleWhatsAppSingle(record)} className="p-2 text-slate-300 hover:text-emerald-500 transition-colors" title={t("pdWhatsAppSingle")}><Share2 className="w-3.5 h-3.5" /></button>
+                        <button onClick={() => removeRecord(record.id!)} className="p-2 text-slate-300 hover:text-rose-500 transition-colors" title={t("pdRemove")}><Trash2 className="w-3.5 h-3.5" /></button>
                       </div>
                     </td>
                   </tr>
@@ -896,7 +897,7 @@ const PaymentDetailsTab: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             <Send className={`w-4 h-4 ${isSaving ? 'animate-bounce' : 'group-hover:translate-x-1 group-hover:-translate-y-1'} transition-transform`} />
             <span className="flex items-center gap-2">
-              {isSaving ? "Syncing Payouts..." : "Save All Settlements"}
+              {isSaving ? "Syncing payments..." : "Save All Settlements"}
               {!isSaving && <CheckCircle2 className="w-3 h-3 opacity-50" />}
             </span>
           </button>
@@ -910,9 +911,9 @@ const PaymentDetailsTab: React.FC = () => {
         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
           <div>
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800 dark:text-white flex items-center gap-3">
-              <History className="w-4 h-4 text-indigo-500" /> Payout History {selectedSite !== "All" ? `- ${selectedSite}` : ""}
+              <History className="w-4 h-4 text-indigo-500" /> {t("pdPaymentHistoryTitle")} {selectedSite !== "All" ? `- ${selectedSite}` : ""}
             </h3>
-            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest italic">All-time stored payment settlements</p>
+            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest italic">{t("pdAllTimeSaved")}</p>
           </div>
           <button onClick={fetchAllData} className="p-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all group border border-slate-100 dark:border-slate-700">
             <Loader2 className={`w-4 h-4 text-indigo-500 ${isFetchingHistory ? 'animate-spin' : 'group-hover:rotate-180 transition-transform'}`} />
@@ -923,12 +924,12 @@ const PaymentDetailsTab: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Labour Detail</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Site Context</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Duty Log</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Settlement Date</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Net Payment</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("pdLabourDetails")}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t("pdSiteContext")}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t("pdDutyLog")}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t("pdSettlementDate")}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t("pdNetPayment")}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t("pdActions")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -1010,7 +1011,7 @@ const PaymentDetailsTab: React.FC = () => {
                       <div className="w-16 h-16 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
                         <History className="w-8 h-8 text-slate-200" />
                       </div>
-                      <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">No Payout History</p>
+                      <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{t("pdNoPaymentHistory")}</p>
                     </div>
                   </td>
                 </tr>

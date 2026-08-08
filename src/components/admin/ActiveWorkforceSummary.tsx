@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Users } from 'lucide-react';
 import { apiService } from '../../lib/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 const ActiveWorkforceSummary: React.FC = () => {
+  const { t } = useLanguage();
   const [counts, setCounts] = useState({ masons: 0, helpers: 0 });
 
   useEffect(() => {
@@ -66,18 +68,18 @@ const ActiveWorkforceSummary: React.FC = () => {
           <Users className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">Active Workforce</h3>
-          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">Current Week Analysis</p>
+          <h3 className="text-lg font-black text-slate-900 dark:text-white uppercase tracking-tight">{t('awTitle')}</h3>
+          <p className="text-xs font-bold text-slate-400 uppercase tracking-widest mt-1">{t('awSubtitle')}</p>
         </div>
       </div>
       <div className="flex gap-4 w-full md:w-auto">
         <div className="flex-1 md:w-32 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 text-center border border-slate-100 dark:border-slate-700">
           <p className="text-3xl font-black text-indigo-600 dark:text-indigo-400 leading-none">{counts.masons}</p>
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2">Masons</p>
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2">{t('awMasons')}</p>
         </div>
         <div className="flex-1 md:w-32 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 text-center border border-slate-100 dark:border-slate-700">
           <p className="text-3xl font-black text-violet-600 dark:text-violet-400 leading-none">{counts.helpers}</p>
-          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2">Helpers</p>
+          <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-2">{t('awHelpers')}</p>
         </div>
       </div>
     </div>

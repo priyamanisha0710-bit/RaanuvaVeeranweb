@@ -1,37 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { 
-  Calculator, 
-  Calendar, 
-  MapPin, 
-  TrendingUp, 
-  Trash2, 
-  Plus, 
-  Printer, 
-  Share2, 
-  ChevronDown,
-  Tag,
-  Wallet,
-  Receipt,
-  Loader2
-} from "lucide-react";
+import { Plus, Receipt, TrendingUp, Tag, MapPin, Calendar, Wallet, Trash2, Calculator, ChevronDown, Printer, Share2, History } from "lucide-react";
 import { generateProfessionalPDF, shareToWhatsApp } from "../../lib/pdfReportGenerator";
-
+import { useLanguage } from "../../context/LanguageContext";
 import { apiService } from "../../lib/api";
 import ActiveWorkforceSummary from "./ActiveWorkforceSummary";
 
-const EXPENSE_CATEGORIES = [
-  "Petrol",
-  "Food",
-  "Tea/Refreshment",
-  "Utensils",
-  "Vehicle Maintenance",
-  "Salary to Staff",
-  "Salary to Labours",
-  "Commission/Additional Expenses",
-  "Other Expenses"
+const getExpenseCategories = (t: any) => [
+  { id: "Petrol/Diesel", label: t("catPetrolDiesel") },
+  { id: "Material Purchase", label: t("catMaterialPurchase") },
+  { id: "Food/Meals", label: t("catFoodMeals") },
+  { id: "Transport", label: t("catTransport") },
+  { id: "Rent", label: t("catRent") },
+  { id: "Tools/Equipment", label: t("catToolsEquipment") },
+  { id: "Miscellaneous", label: t("catMiscellaneous") }
 ];
 
 const ExpensesTab: React.FC = () => {
+  const { t } = useLanguage();
   const [expenses, setExpenses] = useState<any[]>([]);
   const [sites, setSites] = useState<any[]>([]);
   const [selectedSite, setSelectedSite] = useState<string>("All");
@@ -67,7 +52,6 @@ const ExpensesTab: React.FC = () => {
         return siteName === selectedSite;
       });
 
-  // Load from backend on mount
   // Load from backend on mount
   const fetchExpenses = async () => {
     try {
@@ -268,9 +252,9 @@ const ExpensesTab: React.FC = () => {
             <div className="p-2 bg-rose-600 rounded-xl shadow-lg shadow-rose-600/20">
               <Calculator className="w-6 h-6 text-white" />
             </div>
-            Bill Details
+            {t('advBillDetails')}
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Project and Operational Expense Tracking (Offline Mode)</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">{t('expSubtitle')}</p>
         </div>
         
         {/* Top Control Bar with Site Filter and Print Buttons */}
@@ -282,7 +266,7 @@ const ExpensesTab: React.FC = () => {
               onChange={(e) => setSelectedSite(e.target.value)}
               className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs font-bold text-slate-600 dark:text-slate-200 hover:text-indigo-600 transition-all cursor-pointer shadow-sm pr-10 appearance-none min-w-[160px]"
             >
-              <option value="All">All Site Locations</option>
+              <option value="All">{t('advAllSites')}</option>
               {uniqueSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -297,7 +281,7 @@ const ExpensesTab: React.FC = () => {
             onClick={handlePrint}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Printer className="w-4 h-4" /> Print Overall
+            <Printer className="w-4 h-4" /> {t('advPrintBulk')}
           </button>
 
           {/* Share Overall to WhatsApp */}
@@ -305,7 +289,7 @@ const ExpensesTab: React.FC = () => {
             onClick={handleWhatsApp}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Share2 className="w-4 h-4" /> Share Overall
+            <Share2 className="w-4 h-4" /> {t('advShareBulk')}
           </button>
         </div>
       </div>
@@ -316,7 +300,7 @@ const ExpensesTab: React.FC = () => {
           {/* Expenses Dropdown */}
           <div className="flex-1 w-full space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <Receipt className="w-3.5 h-3.5 text-rose-500" /> Expenses
+              <Receipt className="w-3.5 h-3.5 text-rose-500" /> {t('expExpenses')}
             </label>
             <div className="relative group">
               <select
@@ -324,9 +308,9 @@ const ExpensesTab: React.FC = () => {
                 value={formData.category}
                 onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
               >
-                <option value="">Select Category</option>
-                {EXPENSE_CATEGORIES.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
+                <option value="">{t('expSelectCategory')}</option>
+                {getExpenseCategories(t).map(cat => (
+                  <option key={cat.id} value={cat.id}>{cat.label}</option>
                 ))}
               </select>
               <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" />
@@ -336,7 +320,7 @@ const ExpensesTab: React.FC = () => {
           {/* Date */}
           <div className="w-full lg:w-48 space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <Calendar className="w-3.5 h-3.5 text-rose-500" /> Date
+              <Calendar className="w-3.5 h-3.5 text-rose-500" /> {t('advDate')}
             </label>
             <input
               type="date"
@@ -349,7 +333,7 @@ const ExpensesTab: React.FC = () => {
           {/* Amount */}
           <div className="w-full lg:w-48 space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <Wallet className="w-3.5 h-3.5 text-rose-500" /> Amount (₹)
+              <Wallet className="w-3.5 h-3.5 text-rose-500" /> {t('advAmount')}
             </label>
             <input
               type="number"
@@ -363,12 +347,12 @@ const ExpensesTab: React.FC = () => {
           {/* Site Input (Changed from Select to Text) */}
           <div className="flex-1 w-full space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <MapPin className="w-3.5 h-3.5 text-rose-500" /> Site
+              <MapPin className="w-3.5 h-3.5 text-rose-500" /> {t('advSitePlaceholder')}
             </label>
             <input
               type="text"
               required
-              placeholder="Enter Site Location (e.g. Erode)"
+              placeholder={t('expSitePlaceholder')}
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-rose-500/20 transition-all shadow-inner outline-none"
               value={formData.siteId}
               onChange={e => setFormData(prev => ({ ...prev, siteId: e.target.value }))}
@@ -390,7 +374,7 @@ const ExpensesTab: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white dark:bg-slate-900/60 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Total Expenditure</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('expTotalExpense')}</p>
             <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">₹{filteredExpenses.reduce((sum, e) => sum + (e.amount || 0), 0).toLocaleString()}</p>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-500/10 flex items-center justify-center text-rose-600">
@@ -399,8 +383,8 @@ const ExpensesTab: React.FC = () => {
         </div>
         <div className="bg-white dark:bg-slate-900/60 p-6 rounded-3xl border border-slate-100 dark:border-slate-800 flex items-center justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">Record Count</p>
-            <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{filteredExpenses.length} Entries</p>
+            <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">{t('expRecordCount')}</p>
+            <p className="text-2xl font-black text-slate-900 dark:text-white mt-1">{filteredExpenses.length} {t('expRecords')}</p>
           </div>
           <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-500/10 flex items-center justify-center text-indigo-600">
             <Tag className="w-6 h-6" />
@@ -415,9 +399,9 @@ const ExpensesTab: React.FC = () => {
         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
           <div>
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800 dark:text-white flex items-center gap-3">
-              <Receipt className="w-4 h-4 text-rose-500" /> Expense Records {selectedSite !== "All" ? `- ${selectedSite}` : ""}
+              <Receipt className="w-4 h-4 text-rose-500" /> {t('expExpenseRecords')} {selectedSite !== "All" ? `- ${selectedSite}` : ""}
             </h3>
-            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest italic">Stored cloud expenditures and site context</p>
+            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest italic">{t('expSavedCloud')}</p>
           </div>
         </div>
 
@@ -425,12 +409,12 @@ const ExpensesTab: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">No</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Expense Category</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Location</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Amount</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Action</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('expNo')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('advDate')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('expType')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('expLocation')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('expAmount')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('expAction')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -476,10 +460,15 @@ const ExpensesTab: React.FC = () => {
               })}
               {filteredExpenses.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="p-20 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <Receipt className="w-10 h-10 text-slate-200" />
-                      <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-300">No expense records found</p>
+                  <td colSpan={6} className="p-24 text-center">
+                    <div className="flex flex-col items-center gap-4">
+                      <div className="w-16 h-16 rounded-full bg-slate-50 dark:bg-slate-800 flex items-center justify-center">
+                        <History className="w-8 h-8 text-slate-200 dark:text-slate-700" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{t('noHistoricalRecords')}</p>
+                        <p className="text-[10px] text-slate-300 mt-1">{t('expAddExpensesToViewHistory')}</p>
+                      </div>
                     </div>
                   </td>
                 </tr>

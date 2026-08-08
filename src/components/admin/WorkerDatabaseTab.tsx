@@ -3,6 +3,7 @@ import { Plus, Users, Search, Edit, FileDown, Share2, X, Loader2, Trash2 } from 
 import { generateWorkerProfilePDF } from '../../lib/pdfReportGenerator';
 import { WorkerProfile, WorkerCategory, Site } from '../../types';
 import { apiService } from '../../lib/api';
+import { useLanguage } from '../../context/LanguageContext';
 
 const getApiOrigin = (): string => { return "https://api.codingboss.in"; };
 const IMAGE_API_BASE = getApiOrigin();
@@ -43,6 +44,7 @@ const NgrokImage: React.FC<{ src: string; alt: string; className?: string }> = (
 };
 
 const WorkerDatabaseTab: React.FC = () => {
+  const { t } = useLanguage();
   const [workers, setWorkers] = useState<WorkerProfile[]>([]);
   const [sites, setSites] = useState<Site[]>([]);
   const [loading, setLoading] = useState(false);
@@ -365,7 +367,7 @@ const WorkerDatabaseTab: React.FC = () => {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
           <input
             type="text"
-            placeholder="Search by ID, Name or Mobile..."
+            placeholder={t('wdSearchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-800 rounded-xl focus:ring-2 focus:ring-indigo-500/50 outline-none transition-all dark:text-white"
@@ -375,7 +377,7 @@ const WorkerDatabaseTab: React.FC = () => {
           onClick={() => openForm()}
           className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold shadow-lg shadow-indigo-600/30 transition-all"
         >
-          <Plus className="w-5 h-5" /> Add Worker
+          <Plus className="w-5 h-5" /> {t('wdAddWorker')}
         </button>
       </div>
 
@@ -419,7 +421,7 @@ const WorkerDatabaseTab: React.FC = () => {
                         }}
                         className={`flex gap-1 items-center px-2 py-1 rounded-lg text-[8px] font-bold uppercase tracking-wider transition-all hover:scale-105 active:scale-95 ${w.active ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'}`}
                       >
-                        {w.active ? 'Active' : 'Inactive'}
+                        {w.active ? t('wdActive') : t('wdInactive')}
                       </button>
                       <button
                         onClick={(e) => {
@@ -849,8 +851,8 @@ const WorkerDatabaseTab: React.FC = () => {
               <div className="w-20 h-20 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mb-4">
                 <Users className="w-8 h-8 text-slate-300 dark:text-slate-600" />
               </div>
-              <h3 className="text-xl font-black text-slate-700 dark:text-slate-300 mb-2">Worker Registry</h3>
-              <p className="text-slate-500 dark:text-slate-400 font-medium max-w-sm">Select a worker from the list to view their complete profile, history, and records.</p>
+              <h3 className="text-xl font-black text-slate-700 dark:text-slate-300 mb-2">{t('wdWorkerRegistration')}</h3>
+              <p className="text-slate-500 dark:text-slate-400 font-medium max-w-sm">{t('wdSelectWorkerDesc')}</p>
             </div>
           )}
         </div>
@@ -867,9 +869,9 @@ const WorkerDatabaseTab: React.FC = () => {
                 </div>
                 <div>
                   <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight uppercase">
-                    {formData.id ? 'Edit Worker Profile' : 'New Worker Registration'}
+                    {formData.id ? t('wdEditWorkerProfile') : t('wdNewWorkerRegistration')}
                   </h2>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">Hindi Academy Personnel Registry</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mt-1">{t('wdWorkerRegistration')}</p>
                 </div>
               </div>
               <button type="button" onClick={() => setShowForm(false)} className="w-12 h-12 flex items-center justify-center bg-slate-50 hover:bg-slate-100 dark:bg-slate-800 dark:hover:bg-slate-700 rounded-2xl transition-all text-slate-400 hover:text-rose-500 border border-slate-100 dark:border-slate-700 shadow-sm"><X className="w-6 h-6" /></button>
@@ -883,7 +885,7 @@ const WorkerDatabaseTab: React.FC = () => {
                   <div className="absolute top-0 left-0 w-full h-1 bg-indigo-600/20" />
                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-5 mb-8 flex items-center gap-3">
                     <span className="w-3 h-3 rounded-full bg-indigo-500 shadow-[0_0_15px_rgba(79,70,229,0.5)]"></span>
-                    Worker Identification & Core Profile
+                    {t('wdWorkerIdentity')}
                   </h3>
                   <div className="grid grid-cols-2 gap-6">
                     <div className="col-span-2 flex justify-center mb-10">
@@ -894,7 +896,7 @@ const WorkerDatabaseTab: React.FC = () => {
                           ) : (
                             <>
                               <Plus className="w-6 h-6 text-slate-400 mb-1" />
-                              <span className="text-[10px] font-bold text-slate-400 uppercase">Upload</span>
+                              <span className="text-[10px] font-bold text-slate-400 uppercase">{t('wdUpload')}</span>
                             </>
                           )}
                         </div>
@@ -907,43 +909,43 @@ const WorkerDatabaseTab: React.FC = () => {
                       </div>
                     </div>
                     <div className="col-span-1">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Worker ID</label>
-                      <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.workerid || ''} onChange={e => setFormData({ ...formData, workerid: e.target.value })} placeholder="Auto-generated if empty" />
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdWorkerID')}</label>
+                      <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.workerid || ''} onChange={e => setFormData({ ...formData, workerid: e.target.value })} placeholder={t('wdWorkerIDPlaceholder')} />
                     </div>
                     <div className="col-span-1">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Full Name *</label>
-                      <input required type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.fullname || ''} onChange={e => setFormData({ ...formData, fullname: e.target.value })} placeholder="e.g. Ramesh Kumar" />
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdFullName')}</label>
+                      <input required type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.fullname || ''} onChange={e => setFormData({ ...formData, fullname: e.target.value })} placeholder={t('wdFullNamePlaceholder')} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Category *</label>
-                      <input required type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.category || ''} onChange={e => setFormData({ ...formData, category: e.target.value })} placeholder="Mason, Helper, etc." />
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdCategoryReq')}</label>
+                      <input required type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.category || ''} onChange={e => setFormData({ ...formData, category: e.target.value })} placeholder={t('wdCategoryPlaceholder')} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Mobile Number *</label>
-                      <input required type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.mobile || ''} onChange={e => setFormData({ ...formData, mobile: e.target.value })} placeholder="10 Digits" />
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdMobileNum')}</label>
+                      <input required type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.mobile || ''} onChange={e => setFormData({ ...formData, mobile: e.target.value })} placeholder={t('wdMobilePlaceholder')} />
                     </div>
 
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Aadhaar Number</label>
-                      <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.aadhar || ''} onChange={e => setFormData({ ...formData, aadhar: e.target.value })} placeholder="12 Digits" />
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdAadhaar')}</label>
+                      <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.aadhar || ''} onChange={e => setFormData({ ...formData, aadhar: e.target.value })} placeholder={t('wdAadhaarPlaceholder')} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">PAN Number</label>
-                      <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none uppercase shadow-sm" value={formData.pan_num || ''} onChange={e => setFormData({ ...formData, pan_num: e.target.value })} placeholder="ABCDE1234F" />
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdPAN')}</label>
+                      <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none uppercase shadow-sm" value={formData.pan_num || ''} onChange={e => setFormData({ ...formData, pan_num: e.target.value })} placeholder={t('wdPANPlaceholder')} />
                     </div>
                     <div className="col-span-2 mt-2">
-                      <h3 className="text-sm font-black uppercase tracking-widest text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-3 mb-5 flex items-center gap-2 pt-4"><span className="w-2 h-2 rounded-full bg-indigo-500"></span> Address Details</h3>
+                      <h3 className="text-sm font-black uppercase tracking-widest text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-3 mb-5 flex items-center gap-2 pt-4"><span className="w-2 h-2 rounded-full bg-indigo-500"></span> {t('wdAddressDetails')}</h3>
                     </div>
                     <div className="col-span-2">
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Village / Locality</label>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdVillage')}</label>
                       <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.village || ''} onChange={e => setFormData({ ...formData, village: e.target.value })} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">District</label>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdDistrict')}</label>
                       <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.district || ''} onChange={e => setFormData({ ...formData, district: e.target.value })} />
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">State</label>
+                      <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdState')}</label>
                       <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.state || ''} onChange={e => setFormData({ ...formData, state: e.target.value })} />
                     </div>
                   </div>
@@ -953,65 +955,65 @@ const WorkerDatabaseTab: React.FC = () => {
                 <div className="space-y-6">
                   {/* Employment Details */}
                   <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-2xl border border-indigo-100 dark:border-indigo-800/30 shadow-inner">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 border-b border-indigo-200 dark:border-indigo-800/50 pb-3 mb-5 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span> Employment Details</h3>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-indigo-600 dark:text-indigo-400 border-b border-indigo-200 dark:border-indigo-800/50 pb-3 mb-5 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span> {t('wdEmploymentDetails')}</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase mb-1.5">Date of Joining *</label>
+                        <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase mb-1.5">{t('wdDateOfJoining')}</label>
                         <input required type="date" className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all outline-none font-bold text-indigo-900 dark:text-indigo-100" value={formData.date_of_joining || ''} onChange={e => setFormData({ ...formData, date_of_joining: e.target.value })} />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase mb-1.5">Date of Relieving</label>
+                        <label className="block text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase mb-1.5">{t('wdDateOfRelieving')}</label>
                         <input type="date" className="w-full px-4 py-3 bg-white dark:bg-slate-900 border border-indigo-200 dark:border-indigo-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all outline-none" value={formData.date_of_relieving || ''} onChange={e => setFormData({ ...formData, date_of_relieving: e.target.value })} />
                       </div>
                       <div className="col-span-2">
-                        <p className="text-xs text-indigo-500 dark:text-indigo-400 font-medium">Rejoining history and persistent worker ID tracking is automatically managed by the system upon status toggling.</p>
+                        <p className="text-xs text-indigo-500 dark:text-indigo-400 font-medium">{t('wdHistoryTrackingNotice')}</p>
                       </div>
                     </div>
                   </div>
 
                   {/* Personal Details */}
                   <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-sm border border-slate-100 dark:border-slate-800">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-4 mb-6 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50"></span> Personal & Family</h3>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-4 mb-6 flex items-center gap-2"><span className="w-2.5 h-2.5 rounded-full bg-indigo-500 shadow-lg shadow-indigo-500/50"></span> {t('wdPersonalFamilyDetails')}</h3>
                     <div className="grid grid-cols-2 gap-5">
                       <div>
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Blood Group</label>
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdBloodGroup')}</label>
                         <select className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.bloodgroup || ''} onChange={e => setFormData({ ...formData, bloodgroup: e.target.value })}>
-                          <option value="">Select</option>
+                          <option value="">{t('wdSelectOption')}</option>
                           {['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'].map(b => <option key={b} value={b}>{b}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">Marital Status</label>
+                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 ml-1">{t('wdMaritalStatus')}</label>
                         <select className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.marital_sts || 'Unmarried'} onChange={e => setFormData({ ...formData, marital_sts: e.target.value as any })}>
-                          <option value="Unmarried">Unmarried</option>
-                          <option value="Married">Married</option>
+                          <option value="Unmarried">{t('wdUnmarried')}</option>
+                          <option value="Married">{t('wdMarried')}</option>
                         </select>
                       </div>
 
                       {/* Conditional Renders based on Marital Status */}
                       {formData.marital_sts === 'Married' && (
                         <>
-                          <div className="col-span-2 pt-2"><label className="block text-[10px] font-black uppercase tracking-widest mb-1 text-indigo-500">Spouse & Nominee</label></div>
+                          <div className="col-span-2 pt-2"><label className="block text-[10px] font-black uppercase tracking-widest mb-1 text-indigo-500">{t('wdSpouseNominee')}</label></div>
                           <div>
-                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.nominee_name || ''} onChange={e => setFormData({ ...formData, nominee_name: e.target.value })} placeholder="Nominee Name" />
+                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.nominee_name || ''} onChange={e => setFormData({ ...formData, nominee_name: e.target.value })} placeholder={t('wdNomineeNamePlaceholder')} />
                           </div>
                           <div>
-                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.nominee_phone || ''} onChange={e => setFormData({ ...formData, nominee_phone: e.target.value })} placeholder="Nominee Mobile" />
+                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.nominee_phone || ''} onChange={e => setFormData({ ...formData, nominee_phone: e.target.value })} placeholder={t('wdNomineeMobilePlaceholder')} />
                           </div>
                           <div className="col-span-2">
-                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.children_details || ''} onChange={e => setFormData({ ...formData, children_details: e.target.value })} placeholder="Children Details (Names/Ages)" />
+                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.children_details || ''} onChange={e => setFormData({ ...formData, children_details: e.target.value })} placeholder={t('wdChildrenDetailsPlaceholder')} />
                           </div>
                         </>
                       )}
 
                       {formData.marital_sts === 'Unmarried' && (
                         <>
-                          <div className="col-span-2 pt-2"><label className="block text-[10px] font-black uppercase tracking-widest mb-1 text-indigo-500">Parent / Guardian</label></div>
+                          <div className="col-span-2 pt-2"><label className="block text-[10px] font-black uppercase tracking-widest mb-1 text-indigo-500">{t('wdParentGuardian')}</label></div>
                           <div>
-                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.parent_name || ''} onChange={e => setFormData({ ...formData, parent_name: e.target.value })} placeholder="Parent Name" />
+                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.parent_name || ''} onChange={e => setFormData({ ...formData, parent_name: e.target.value })} placeholder={t('wdParentNamePlaceholder')} />
                           </div>
                           <div>
-                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.parentmob_num || ''} onChange={e => setFormData({ ...formData, parentmob_num: e.target.value })} placeholder="Parent Mobile" />
+                            <input type="text" className="w-full px-5 py-4 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800 rounded-2xl focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 dark:text-white transition-all outline-none shadow-sm" value={formData.parentmob_num || ''} onChange={e => setFormData({ ...formData, parentmob_num: e.target.value })} placeholder={t('wdParentMobilePlaceholder')} />
                           </div>
                         </>
                       )}
@@ -1020,27 +1022,27 @@ const WorkerDatabaseTab: React.FC = () => {
 
                   {/* Ref & Insurance */}
                   <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-3 mb-5 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-indigo-500"></span> Reference & Insurance</h3>
+                    <h3 className="text-sm font-black uppercase tracking-widest text-indigo-500 border-b border-slate-100 dark:border-slate-800 pb-3 mb-5 flex items-center gap-2"><span className="w-2 h-2 rounded-full bg-indigo-500"></span> {t('wdRefAndInsurance')}</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Referred By (Name)</label>
+                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdReferredBy')}</label>
                         <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all outline-none" value={formData.referred_by || ''} onChange={e => setFormData({ ...formData, referred_by: e.target.value })} />
                       </div>
                       <div>
-                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Referrer Mobile</label>
+                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdReferralMobile')}</label>
                         <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white transition-all outline-none" value={formData.referral_phno || ''} onChange={e => setFormData({ ...formData, referral_phno: e.target.value })} />
                       </div>
 
                       <div className="col-span-2 pt-2">
-                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5 text-indigo-500">Insurance Available</label>
+                        <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5 text-indigo-500">{t('wdHasInsurance')}</label>
                         <div className="flex gap-4">
                           <label className="flex items-center gap-2 cursor-pointer bg-slate-50 dark:bg-slate-950 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 flex-1 hover:border-indigo-500">
                             <input type="radio" name="insurance" checked={formData.insurance_status === 'Yes'} onChange={() => setFormData({ ...formData, insurance_status: 'Yes' })} className="accent-indigo-600" />
-                            <span className="text-sm font-bold dark:text-white">Yes, Enrolled</span>
+                            <span className="text-sm font-bold dark:text-white">{t('wdYesRegistered')}</span>
                           </label>
                           <label className="flex items-center gap-2 cursor-pointer bg-slate-50 dark:bg-slate-950 px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 flex-1 hover:border-indigo-500">
                             <input type="radio" name="insurance" checked={formData.insurance_status !== 'Yes'} onChange={() => setFormData({ ...formData, insurance_status: 'No' })} className="accent-indigo-600" />
-                            <span className="text-sm font-bold dark:text-white">Not Enrolled</span>
+                            <span className="text-sm font-bold dark:text-white">{t('wdNotRegistered')}</span>
                           </label>
                         </div>
                       </div>
@@ -1049,21 +1051,21 @@ const WorkerDatabaseTab: React.FC = () => {
                         <>
                           <div className="col-span-2 mt-4 grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="col-span-1">
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Premium Amount</label>
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdPremiumAmount')}</label>
                               <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                                 <input type="text" className="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.profile_premium || ''} onChange={e => setFormData({ ...formData, profile_premium: e.target.value })} placeholder="0.00" />
                               </div>
                             </div>
                             <div className="col-span-1">
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Life Insured Amount</label>
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdLifeInsuranceAmount')}</label>
                               <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                                 <input type="text" className="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.life_insured_amount || ''} onChange={e => setFormData({ ...formData, life_insured_amount: e.target.value })} placeholder="0.00" />
                               </div>
                             </div>
                             <div className="col-span-1">
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Medical Insured Amount</label>
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdMedicalInsuranceAmount')}</label>
                               <div className="relative">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 font-bold">₹</span>
                                 <input type="text" className="w-full pl-8 pr-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.medical_insured_amount || ''} onChange={e => setFormData({ ...formData, medical_insured_amount: e.target.value })} placeholder="0.00" />
@@ -1073,27 +1075,27 @@ const WorkerDatabaseTab: React.FC = () => {
 
                           <div className="col-span-2 mt-2 gap-4 grid grid-cols-2">
                             <div>
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Policy Number</label>
-                              <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.policy_num || ''} onChange={e => setFormData({ ...formData, policy_num: e.target.value })} placeholder="Policy Number" />
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdPolicyNumber')}</label>
+                              <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.policy_num || ''} onChange={e => setFormData({ ...formData, policy_num: e.target.value })} placeholder={t('wdPolicyNumberPlaceholder')} />
                             </div>
                             <div>
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Policy Date</label>
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdPolicyDate')}</label>
                               <input type="date" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.insurance_date || ''} onChange={e => setFormData({ ...formData, insurance_date: e.target.value })} />
                             </div>
                             <div>
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Policy Duration</label>
-                              <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.policy_duration || ''} onChange={e => setFormData({ ...formData, policy_duration: e.target.value })} placeholder="e.g. 1 Year, 6 Months" />
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdPolicyDuration')}</label>
+                              <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.policy_duration || ''} onChange={e => setFormData({ ...formData, policy_duration: e.target.value })} placeholder={t('wdPolicyDurationPlaceholder')} />
                             </div>
                             <div>
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Insurance Company</label>
-                              <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.insurancecompany || ''} onChange={e => setFormData({ ...formData, insurancecompany: e.target.value })} placeholder="Insurance Company" />
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdInsuranceCompany')}</label>
+                              <input type="text" className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.insurancecompany || ''} onChange={e => setFormData({ ...formData, insurancecompany: e.target.value })} placeholder={t('wdInsuranceCompanyPlaceholder')} />
                             </div>
                             <div>
-                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">Source</label>
+                              <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1.5">{t('wdSource')}</label>
                               <select className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 dark:text-white outline-none" value={formData.insurance_source || 'Self'} onChange={e => setFormData({ ...formData, insurance_source: e.target.value as any })}>
-                                <option value="Self">Taken by Self</option>
-                                <option value="Agent">Taken via Agent</option>
-                                <option value="Company">Provided by Company</option>
+                                <option value="Self">{t('wdSourceSelf')}</option>
+                                <option value="Agent">{t('wdSourceAgent')}</option>
+                                <option value="Company">{t('wdSourceCompany')}</option>
                               </select>
                             </div>
                           </div>
@@ -1112,14 +1114,14 @@ const WorkerDatabaseTab: React.FC = () => {
                 onClick={() => setShowForm(false)}
                 className="px-8 py-3 rounded-xl font-bold bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-100 dark:border-slate-700"
               >
-                Cancel
+                {t('wdCancel')}
               </button>
               <button
                 type="button"
                 onClick={handleSaveWorker}
                 className="px-10 py-3 rounded-xl font-black uppercase tracking-widest text-sm bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all active:scale-95"
               >
-                {formData.id ? 'Save Changes' : 'Register Worker'}
+                {formData.id ? t('wdSaveChanges') : t('wdRegisterWorker')}
               </button>
             </div>
           </div>

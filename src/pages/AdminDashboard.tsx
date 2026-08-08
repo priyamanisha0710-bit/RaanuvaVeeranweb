@@ -6,7 +6,8 @@ import WorkerDatabaseTab from "../components/admin/WorkerDatabaseTab";
 import LiveClassTab from "../components/admin/LiveClassTab";
 import RecordedClassTab from "../components/admin/RecordedClassTab";
 import UserManagementTab from "../components/admin/UserManagementTab";
-import { LogOut, Layout, Play, Briefcase, Settings, Bell, Plus, Users, Video, Globe, UserPlus } from "lucide-react";
+import { LogOut, Layout, Play, Briefcase, Settings, Bell, Plus, Users, Video, Globe, UserPlus, Languages } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext";
 
 // ─── Interfaces ───
 interface Course {
@@ -26,6 +27,7 @@ const initialCourses: Course[] = [
 const AdminDashboard: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t, language, setLanguage } = useLanguage();
 
   // Force Light Mode for performance and clarity
   useEffect(() => {
@@ -70,20 +72,20 @@ const AdminDashboard: React.FC = () => {
               <Layout className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-black text-indigo-950 tracking-tight">Admin<span className="text-indigo-600">Panel</span></h1>
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-0.5">Control Center</p>
+              <h1 className="text-xl font-black text-indigo-950 tracking-tight">{t('adminPanel').replace('Panel', '')}<span className="text-indigo-600">Panel</span></h1>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400 mt-0.5">{t('controlCenter')}</p>
             </div>
           </div>
         </div>
 
         <nav className="p-3 md:p-5 flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-y-auto no-scrollbar">
           {[
-            { id: "courses", label: "Course Details", icon: Settings },
-            { id: "manpower", label: "Manpower Services", icon: Briefcase },
-            { id: "workerDatabase", label: "Worker Database", icon: Users },
-            { id: "live", label: "Live Broadcast", icon: Play },
-            { id: "recordedClasses", label: "Recorded Classes", icon: Video },
-            { id: "userManagement", label: "User Management", icon: UserPlus },
+            { id: "courses", label: t('tabCourses'), icon: Settings },
+            { id: "manpower", label: t('tabManpower'), icon: Briefcase },
+            { id: "workerDatabase", label: t('tabWorkerDatabase'), icon: Users },
+            { id: "live", label: t('tabLiveClass'), icon: Play },
+            { id: "recordedClasses", label: t('tabRecordedClasses'), icon: Video },
+            { id: "userManagement", label: t('tabUserManagement'), icon: UserPlus },
           ].map((item) => (
             <button
               key={item.id}
@@ -100,13 +102,23 @@ const AdminDashboard: React.FC = () => {
 
         <div className="hidden md:block p-6 border-t border-slate-100 bg-slate-50/50 space-y-2 mt-auto">
           <button
+            onClick={() => setLanguage(language === 'en' ? 'ta' : 'en')}
+            className="w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-slate-600 hover:bg-slate-100 transition-colors duration-200 font-bold text-xs uppercase tracking-wider group"
+          >
+            <div className="w-8 h-8 rounded-xl bg-slate-200 flex items-center justify-center group-hover:bg-slate-300 transition-colors duration-200">
+              <Languages className="w-4 h-4" />
+            </div>
+            {t('switchLanguage')}
+          </button>
+          
+          <button
             onClick={() => navigate("/")}
             className="w-full flex items-center gap-4 px-5 py-3 rounded-2xl text-indigo-600 hover:bg-indigo-50 transition-colors duration-200 font-bold text-xs uppercase tracking-wider group"
           >
             <div className="w-8 h-8 rounded-xl bg-indigo-100 flex items-center justify-center group-hover:bg-indigo-200 transition-colors duration-200">
               <Globe className="w-4 h-4" />
             </div>
-            View Frontend
+            {t('viewSite')}
           </button>
           
           <button
@@ -116,7 +128,7 @@ const AdminDashboard: React.FC = () => {
             <div className="w-8 h-8 rounded-xl bg-rose-50 flex items-center justify-center group-hover:bg-rose-500 group-hover:text-white transition-colors duration-200">
               <LogOut className="w-4 h-4" />
             </div>
-            Sign Out
+            {t('logout')}
           </button>
         </div>
       </div>
@@ -131,12 +143,12 @@ const AdminDashboard: React.FC = () => {
               <table className="w-full text-left">
                 <thead className="bg-slate-50 text-slate-500 text-sm font-medium uppercase tracking-wider">
                   <tr>
-                    <th className="px-6 py-4">Course Name</th>
-                    <th className="px-6 py-4">Category</th>
-                    <th className="px-6 py-4">Instructor</th>
-                    <th className="px-6 py-4">Price</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4 text-right">Actions</th>
+                    <th className="px-6 py-4">{t('adCourseName')}</th>
+                    <th className="px-6 py-4">{t('adCategory')}</th>
+                    <th className="px-6 py-4">{t('adInstructor')}</th>
+                    <th className="px-6 py-4">{t('adPrice')}</th>
+                    <th className="px-6 py-4">{t('adStatus')}</th>
+                    <th className="px-6 py-4 text-right">{t('adActions')}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
@@ -150,7 +162,7 @@ const AdminDashboard: React.FC = () => {
                         <span className={`px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest border ${
                           course.status === 'Active' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
                         }`}>
-                          {course.status}
+                          {course.status === 'Active' ? t('adActive') : t('adDraft')}
                         </span>
                       </td>
                       <td className="px-6 py-4 text-right">

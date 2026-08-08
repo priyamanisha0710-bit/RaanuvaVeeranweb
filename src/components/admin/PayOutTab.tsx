@@ -26,6 +26,7 @@ import axios from "axios";
 import { apiService } from "../../lib/api";
 import { generateProfessionalPDF, shareToWhatsApp } from "../../lib/pdfReportGenerator";
 import ActiveWorkforceSummary from "./ActiveWorkforceSummary";
+import { useLanguage } from "../../context/LanguageContext";
 
 // API Base for proxied requests
 const API_BASE = import.meta.env.VITE_API_BASE_URL 
@@ -53,6 +54,7 @@ const PayOutTab: React.FC = () => {
   const [isFetchingHistory, setIsFetchingHistory] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [selectedSite, setSelectedSite] = useState<string>("All");
+  const { t } = useLanguage();
 
   // Extract unique site locations from the assignments and permanent history logs
   const uniqueSites = Array.from(
@@ -246,7 +248,7 @@ const PayOutTab: React.FC = () => {
   const getWeekLabels = (start: string) => {
     const dates = [];
     const date = new Date(start);
-    const dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const dayNames = [t('sunday'), t('monday'), t('tuesday'), t('wednesday'), t('thursday'), t('friday'), t('saturday')];
     for (let i = 0; i < 7; i++) {
       const d = new Date(date);
       d.setDate(date.getDate() + i);
@@ -481,9 +483,9 @@ const PayOutTab: React.FC = () => {
               <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
                 <Calculator className="w-6 h-6 text-white" />
               </div>
-              Site Bill
+              {t('poTitle')}
             </h2>
-            <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Workforce Settlement & Reporting</p>
+            <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">{t('poSubtitle')}</p>
           </div>
 
           <div className="h-12 w-px bg-slate-100 dark:bg-slate-800 hidden md:block" />
@@ -491,7 +493,7 @@ const PayOutTab: React.FC = () => {
           <div className="flex items-center gap-4">
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-indigo-500 flex items-center gap-2">
-                <Filter className="w-3 h-3" /> View From
+                <Filter className="w-3 h-3" /> {t('poFrom')}
               </label>
               <input
                 type="date"
@@ -505,7 +507,7 @@ const PayOutTab: React.FC = () => {
             </div>
             <div className="space-y-1">
               <label className="text-[10px] font-black uppercase tracking-widest text-indigo-500 flex items-center gap-2">
-                <Filter className="w-3 h-3" /> To
+                <Filter className="w-3 h-3" /> {t('poTo')}
               </label>
               <input
                 type="date"
@@ -526,7 +528,7 @@ const PayOutTab: React.FC = () => {
               onChange={(e) => setSelectedSite(e.target.value)}
               className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs font-bold text-slate-600 dark:text-slate-200 hover:text-indigo-600 transition-all cursor-pointer shadow-sm pr-10 appearance-none min-w-[160px]"
             >
-              <option value="All">All Site Locations</option>
+              <option value="All">{t('poAllSites')}</option>
               {uniqueSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -541,7 +543,7 @@ const PayOutTab: React.FC = () => {
             onClick={handlePrintOverallHistory}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Printer className="w-4 h-4" /> Print Overall
+            <Printer className="w-4 h-4" /> {t('poPrintOverall')}
           </button>
 
           {/* Share Overall to WhatsApp */}
@@ -549,7 +551,7 @@ const PayOutTab: React.FC = () => {
             onClick={handleWhatsAppOverallHistory}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Share2 className="w-4 h-4" /> Share Overall
+            <Share2 className="w-4 h-4" /> {t('poShareOverall')}
           </button>
         </div>
       </div>
@@ -559,12 +561,12 @@ const PayOutTab: React.FC = () => {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-3">
             <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Entry Details</h3>
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('poEntryDetails')}</h3>
           </div>
           
           <div className="flex items-center gap-4 bg-slate-50 dark:bg-slate-800/50 p-2 rounded-2xl border border-slate-100 dark:border-slate-700/50">
             <label className="text-[9px] font-black uppercase tracking-widest text-slate-400 flex items-center gap-2 ml-2">
-              <Calendar className="w-3 h-3 text-indigo-500" /> Week Starting:
+              <Calendar className="w-3 h-3 text-indigo-500" /> {t('poWeekStarting')}
             </label>
             <input 
               type="date" 
@@ -578,7 +580,7 @@ const PayOutTab: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-indigo-600 flex items-center gap-2 ml-1">
-              <Hash className="w-3.5 h-3.5" /> Labour ID
+              <Hash className="w-3.5 h-3.5" /> {t('poLabourId')}
             </label>
             <div className="relative">
               <input
@@ -586,7 +588,7 @@ const PayOutTab: React.FC = () => {
                 className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-indigo-100 dark:border-indigo-900/30 rounded-xl p-4 text-sm font-black text-indigo-600 dark:text-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-inner outline-none"
                 value={formData.labourId}
                 onChange={e => setFormData(prev => ({ ...prev, labourId: e.target.value }))}
-                placeholder="Labour (e.g. 001)"
+                placeholder={t('poLabourIdPlaceholder')}
               />
               {isFetchingAssignments && <Loader2 className="w-4 h-4 absolute right-4 top-4 animate-spin text-indigo-500" />}
             </div>
@@ -594,40 +596,40 @@ const PayOutTab: React.FC = () => {
 
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <UserCircle className="w-3.5 h-3.5" /> Engineer / Contractor
+              <UserCircle className="w-3.5 h-3.5" /> {t('poEngineer')}
             </label>
             <input
               type="text"
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
               value={formData.engineerName}
               onChange={e => setFormData(prev => ({ ...prev, engineerName: e.target.value }))}
-              placeholder="Enter Name"
+              placeholder={t('poEngineerPlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <MapPin className="w-3.5 h-3.5" /> Bill Site
+              <MapPin className="w-3.5 h-3.5" /> {t('poBillSite')}
             </label>
             <input
               type="text"
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
               value={formData.siteName}
               onChange={e => setFormData(prev => ({ ...prev, siteName: e.target.value }))}
-              placeholder="Enter Site"
+              placeholder={t('poSitePlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <Briefcase className="w-3.5 h-3.5" /> Category
+              <Briefcase className="w-3.5 h-3.5" /> {t('poCategory')}
             </label>
             <input
               type="text"
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
               value={formData.category}
               onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-              placeholder="Role"
+              placeholder={t('poCategoryPlaceholder')}
             />
           </div>
         </div>
@@ -635,20 +637,20 @@ const PayOutTab: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-              <Briefcase className="w-3.5 h-3.5" /> Labour Name
+              <Briefcase className="w-3.5 h-3.5" /> {t('poLabourName')}
             </label>
             <input
               type="text"
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
               value={formData.labourName}
               onChange={e => setFormData(prev => ({ ...prev, labourName: e.target.value }))}
-              placeholder="Enter Full Name"
+              placeholder={t('poLabourNamePlaceholder')}
             />
           </div>
 
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 flex items-center gap-2 ml-1">
-              <TrendingUp className="w-3.5 h-3.5" /> Rate per Duty (₹)
+              <TrendingUp className="w-3.5 h-3.5" /> {t('poRatePerDuty')}
             </label>
             <input
               type="number"
@@ -663,7 +665,7 @@ const PayOutTab: React.FC = () => {
         {/* Duty Log */}
         <div className="bg-slate-50/50 dark:bg-slate-800/40 rounded-3xl p-6 mb-8 border border-slate-100/50 dark:border-slate-800/50">
           <label className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-2 mb-6 ml-1">
-            <Calendar className="w-3.5 h-3.5" /> 7-Day Duty Log ({entryStartDate})
+            <Calendar className="w-3.5 h-3.5" /> {t('po7DayLog')} ({entryStartDate})
           </label>
           <div className="grid grid-cols-4 md:grid-cols-7 gap-3">
             {formData.days.map((day, idx) => (
@@ -688,11 +690,11 @@ const PayOutTab: React.FC = () => {
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 pt-6 border-t border-slate-100 dark:border-slate-800">
           <div className="flex gap-4">
             <div className="bg-slate-50/50 dark:bg-slate-800/50 px-8 py-5 rounded-3xl border border-slate-100/50 dark:border-slate-700/30 flex flex-col items-center">
-              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Duties</span>
+              <span className="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('poTotalDuties')}</span>
               <span className="text-2xl font-black text-slate-900 dark:text-white">{formData.totalDuties}</span>
             </div>
             <div className="bg-indigo-600 px-8 py-5 rounded-3xl shadow-xl shadow-indigo-600/20 flex flex-col items-center min-w-[180px]">
-              <span className="block text-[9px] font-black text-white/60 uppercase tracking-widest mb-1">Estimated Amount</span>
+              <span className="block text-[9px] font-black text-white/60 uppercase tracking-widest mb-1">{t('poEstAmount')}</span>
               <span className="text-2xl font-black text-white">₹ {formData.totalAmount.toLocaleString()}</span>
             </div>
           </div>
@@ -701,7 +703,7 @@ const PayOutTab: React.FC = () => {
             onClick={handleAddRecord}
             className="w-full md:w-auto bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-10 py-5 rounded-3xl font-black uppercase tracking-[0.2em] text-[11px] flex items-center justify-center gap-3 hover:scale-105 transition-all shadow-2xl active:scale-95"
           >
-            <Plus className="w-4 h-4" /> Add to Bill
+            <Plus className="w-4 h-4" /> {t('poAddToBill')}
           </button>
         </div>
       </div>
@@ -711,11 +713,11 @@ const PayOutTab: React.FC = () => {
         <div className="bg-white dark:bg-slate-900/60 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden animate-slide-up">
           <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/30">
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
-              <TrendingUp className="w-4 h-4 text-indigo-500" /> Current Bill Summary 
+              <TrendingUp className="w-4 h-4 text-indigo-500" /> {t('poCurrentBill')} 
             </h3>
             <div className="flex gap-2">
-              <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 hover:text-indigo-600 transition-all font-black text-[9px] uppercase tracking-widest border border-slate-100 dark:border-slate-700 shadow-sm"><Printer className="w-3.5 h-3.5" /> Full Print</button>
-              <button onClick={handleWhatsApp} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all font-black text-[9px] uppercase tracking-widest border border-emerald-100 shadow-sm"><Share2 className="w-3.5 h-3.5" /> Full WhatsApp</button>
+              <button onClick={handlePrint} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 hover:text-indigo-600 transition-all font-black text-[9px] uppercase tracking-widest border border-slate-100 dark:border-slate-700 shadow-sm"><Printer className="w-3.5 h-3.5" /> {t('poFullPrint')}</button>
+              <button onClick={handleWhatsApp} className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-50 text-emerald-600 hover:bg-emerald-600 hover:text-white transition-all font-black text-[9px] uppercase tracking-widest border border-emerald-100 shadow-sm"><Share2 className="w-3.5 h-3.5" /> {t('poFullWhatsApp')}</button>
             </div>
           </div>
 
@@ -723,11 +725,11 @@ const PayOutTab: React.FC = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Labour Detail</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Duty Log</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Total</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Amount</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('poColLabourDetails')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('poColDutyLog')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('poColTotal')}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('poColAmount')}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('poColActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -773,7 +775,7 @@ const PayOutTab: React.FC = () => {
               <tfoot>
                 <tr className="bg-indigo-600">
                   <td colSpan={3} className="p-6">
-                    <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em]">Grand Settlement Total</span>
+                    <span className="text-[10px] font-black text-white/60 uppercase tracking-[0.2em]">{t('poOverallSettlement')}</span>
                   </td>
                   <td className="p-6 text-right">
                     <span className="text-xl font-black text-white">₹ {billRecords.reduce((sum, r) => sum + r.totalAmount, 0).toLocaleString()}</span>
@@ -796,7 +798,7 @@ const PayOutTab: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
             <Send className={`w-4 h-4 ${isSaving ? 'animate-bounce' : 'group-hover:translate-x-1 group-hover:-translate-y-1'} transition-transform`} />
             <span className="flex items-center gap-2">
-              {isSaving ? "Syncing Logs..." : "Finalize & Save Weekly Logs"}
+              {isSaving ? t('poSyncing') : t('poFinalizeSave')}
               {!isSaving && <CheckCircle2 className="w-3 h-3 opacity-50" />}
             </span>
           </button>
@@ -810,9 +812,9 @@ const PayOutTab: React.FC = () => {
         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
           <div>
             <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-800 dark:text-white flex items-center gap-3">
-              <History className="w-4 h-4 text-indigo-500" /> Permanent Log History {selectedSite !== "All" ? `- ${selectedSite}` : ""}
+              <History className="w-4 h-4 text-indigo-500" /> {t('poPermLog')} {selectedSite !== "All" ? `- ${selectedSite}` : ""}
             </h3>
-            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest italic">All-time stored workforce records</p>
+            <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest italic">{t('poPermLogSub')}</p>
           </div>
           <button onClick={fetchData} className="p-3 bg-white dark:bg-slate-800 rounded-xl shadow-sm hover:shadow-md transition-all group border border-slate-100 dark:border-slate-700">
             <Loader2 className={`w-4 h-4 text-indigo-500 ${isFetchingHistory ? 'animate-spin' : 'group-hover:rotate-180 transition-transform'}`} />
@@ -823,12 +825,12 @@ const PayOutTab: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Labour Detail</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Site & Engineer</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Duty Log</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Total</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Estimate Amount</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('poColLabourDetails')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('poColSiteEng')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('poColDutyLog')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('poColTotal')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('poEstAmount')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('poColActions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -914,8 +916,8 @@ const PayOutTab: React.FC = () => {
                         <History className="w-8 h-8 text-slate-200" />
                       </div>
                       <div>
-                        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">No Historical Records</p>
-                        <p className="text-[10px] text-slate-300 mt-1">Start saving bills to see history</p>
+                        <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-400">{t('noHistoricalRecords')}</p>
+                        <p className="text-[10px] text-slate-300 mt-1">{t('startSavingBills')}</p>
                       </div>
                     </div>
                   </td>

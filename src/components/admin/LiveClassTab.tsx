@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Play, Square, Video, Link, Radio, Users, Settings, Bell, ExternalLink } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const LiveClassTab: React.FC = () => {
+  const { t } = useLanguage();
   const [isLiveActive, setIsLiveActive] = useState<boolean>(localStorage.getItem('isLiveActive') === 'true');
   const [meetingLink, setMeetingLink] = useState<string>(localStorage.getItem('liveMeetingLink') || 'https://api.codingboss.in/military/live');
   const [statusMessage, setStatusMessage] = useState<string>("");
@@ -19,13 +21,13 @@ const LiveClassTab: React.FC = () => {
 
   const startLiveClass = () => {
     if (!meetingLink.trim()) {
-      setStatusMessage("Please provide a valid meeting link.");
+      setStatusMessage(t('validLinkRequiredMsg'));
       return;
     }
     localStorage.setItem('isLiveActive', 'true');
     localStorage.setItem('liveMeetingLink', meetingLink);
     setIsLiveActive(true);
-    setStatusMessage("Class started successfully!");
+    setStatusMessage(t('liveClassStartedMsg'));
 
     // Open the meeting link directly for the admin
     window.open(meetingLink, '_blank');
@@ -38,7 +40,7 @@ const LiveClassTab: React.FC = () => {
     localStorage.removeItem('isLiveActive');
     localStorage.removeItem('liveMeetingLink');
     setIsLiveActive(false);
-    setStatusMessage("Class ended.");
+    setStatusMessage(t('liveClassEndedMsg'));
 
     // Trigger a storage event manually for the same tab
     window.dispatchEvent(new Event('storage'));
@@ -51,17 +53,17 @@ const LiveClassTab: React.FC = () => {
         <div>
           <h2 className="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
             <Radio className={`w-8 h-8 ${isLiveActive ? "text-rose-500 animate-pulse" : "text-slate-400"}`} />
-            Live Class Control Center
+            {t('liveClassTitle')}
           </h2>
           <p className="text-slate-500 font-medium">
-            Broadcast your knowledge to thousands of students worldwide.
+            {t('liveClassSubtitle')}
           </p>
         </div>
         <div className={`px-6 py-2.5 rounded-2xl text-xs font-black uppercase tracking-widest border-2 transition-all duration-500 ${isLiveActive
           ? "bg-rose-50 text-rose-600 border-rose-100 animate-bounce"
           : "bg-slate-50 text-slate-400 border-slate-100"
           }`}>
-          {isLiveActive ? "● System Live" : "○ System Offline"}
+          {isLiveActive ? t('systemLive') : t('systemOffline')}
         </div>
       </div>
 
@@ -80,14 +82,14 @@ const LiveClassTab: React.FC = () => {
                   <Video className={`w-7 h-7 ${isLiveActive ? "text-rose-600" : "text-indigo-600"}`} />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-slate-900">Broadcast Configuration</h3>
-                  <p className="text-sm text-slate-500 font-medium text-indigo-600">Secure P2P Streaming Engine</p>
+                  <h3 className="text-xl font-bold text-slate-900">{t('broadcastConfig')}</h3>
+                  <p className="text-sm text-slate-500 font-medium text-indigo-600">{t('secureEngine')}</p>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div>
-                  <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">Meeting Destination URL</label>
+                  <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-3 ml-1">{t('meetingUrlLabel')}</label>
                   <div className="relative group">
                     <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
                       <Link className="w-5 h-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" />
@@ -97,7 +99,7 @@ const LiveClassTab: React.FC = () => {
                       value={meetingLink}
                       onChange={(e) => setMeetingLink(e.target.value)}
                       disabled={isLiveActive}
-                      placeholder="Enter meeting or RTMP link..."
+                      placeholder={t('meetingUrlPlaceholder')}
                       className="w-full pl-14 pr-6 py-5 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-400 focus:outline-none focus:border-indigo-600/30 focus:ring-4 focus:ring-indigo-600/5 transition-all disabled:opacity-50"
                     />
                   </div>
@@ -110,7 +112,7 @@ const LiveClassTab: React.FC = () => {
                       className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-5 rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/20 transition-all active:scale-95 flex items-center justify-center gap-3 group"
                     >
                       <Play className="w-6 h-6 fill-white group-hover:scale-110 transition-transform" />
-                      Start Stream Engine
+                      {t('startStreamEngine')}
                     </button>
                   ) : (
                     <>
@@ -119,14 +121,14 @@ const LiveClassTab: React.FC = () => {
                         className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-5 rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/20 transition-all active:scale-95 flex items-center justify-center gap-3 group"
                       >
                         <ExternalLink className="w-6 h-6 group-hover:scale-110 transition-transform" />
-                        Enter Meeting Room
+                        {t('enterMeetingRoom')}
                       </button>
                       <button
                         onClick={endLiveClass}
                         className="flex-1 bg-rose-500 hover:bg-rose-600 text-white px-8 py-5 rounded-2xl font-black text-lg shadow-xl shadow-rose-500/20 transition-all active:scale-95 flex items-center justify-center gap-3 group"
                       >
                         <Square className="w-6 h-6 fill-white group-hover:scale-110 transition-transform" />
-                        Terminate Session
+                        {t('terminateSession')}
                       </button>
                     </>
                   )}
@@ -153,7 +155,7 @@ const LiveClassTab: React.FC = () => {
                 <Users className="w-6 h-6 text-emerald-600" />
               </div>
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Active Students</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('activeStudentsCard')}</p>
                 <p className="text-2xl font-black text-slate-900">{isLiveActive ? "1,248" : "0"}</p>
               </div>
             </div>
@@ -162,7 +164,7 @@ const LiveClassTab: React.FC = () => {
                 <Bell className="w-6 h-6 text-amber-600" />
               </div>
               <div>
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sent Notifications</p>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('sentNotificationsCard')}</p>
                 <p className="text-2xl font-black text-slate-900">{isLiveActive ? "4,500+" : "0"}</p>
               </div>
             </div>
@@ -176,14 +178,14 @@ const LiveClassTab: React.FC = () => {
               <Radio className="w-24 h-24" />
             </div>
 
-            <h4 className="text-lg font-black mb-4 relative z-10">Broadcast Rules</h4>
+            <h4 className="text-lg font-black mb-4 relative z-10">{t('broadcastRulesTitle')}</h4>
             <ul className="space-y-4 relative z-10">
               {[
-                "Stable high-speed internet required",
-                "Minimum 1080p camera quality",
-                "Quiet environment for audio clarity",
-                "Ensure Hindi script visibility",
-                "Engage with chat every 10 mins"
+                t('rule1'),
+                t('rule2'),
+                t('rule3'),
+                t('rule4'),
+                t('rule5')
               ].map((rule, i) => (
                 <li key={i} className="flex items-start gap-3 text-sm font-medium text-slate-400">
                   <div className="w-5 h-5 rounded-full bg-slate-800 flex items-center justify-center text-[10px] font-black text-indigo-400 flex-shrink-0 mt-0.5">
@@ -196,10 +198,10 @@ const LiveClassTab: React.FC = () => {
           </div>
 
           <div className="bg-indigo-600 rounded-[2.5rem] p-8 text-white">
-            <h4 className="text-lg font-black mb-2">Live Support</h4>
-            <p className="text-indigo-100 text-sm font-medium mb-6">Need help with the broadcast engine?</p>
+            <h4 className="text-lg font-black mb-2">{t('liveSupportTitle')}</h4>
+            <p className="text-indigo-100 text-sm font-medium mb-6">{t('liveSupportDesc')}</p>
             <button className="w-full py-4 bg-white/10 hover:bg-white/20 rounded-2xl text-white font-bold text-sm transition-all border border-white/20 backdrop-blur-sm">
-              Contact Tech Desk
+              {t('contactTechDesk')}
             </button>
           </div>
         </div>

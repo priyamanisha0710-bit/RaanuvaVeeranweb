@@ -21,15 +21,16 @@ import axios from "axios";
 import { apiService } from "../../lib/api";
 import { useEngineerData } from "../../hooks/useEngineerData";
 import ActiveWorkforceSummary from "./ActiveWorkforceSummary";
+import { generateProfessionalPDF, shareToWhatsApp } from "../../lib/pdfReportGenerator";
+import { useLanguage } from "../../context/LanguageContext";
 
 // API Base for proxied requests
 const API_BASE = import.meta.env.VITE_API_BASE_URL 
   ? import.meta.env.VITE_API_BASE_URL.replace(/\/+$/, "")
   : '/api-manpower';
 
-import { generateProfessionalPDF, shareToWhatsApp } from "../../lib/pdfReportGenerator";
-
 const AdvanceTab: React.FC = () => {
+  const { t } = useLanguage();
   const { refreshData } = useEngineerData();
   const [isFetchingAssignments, setIsFetchingAssignments] = useState(false);
   const [assignments, setAssignments] = useState<any[]>([]);
@@ -287,9 +288,9 @@ const AdvanceTab: React.FC = () => {
             <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
               <Calculator className="w-6 h-6 text-white" />
             </div>
-            Bill Details
+            {t('advBillDetails')}
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">Track worker advances and settlement bills</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 font-medium italic">{t('advTrackBills')}</p>
         </div>
         
         {/* Top Control Bar with Site Filter and Print Buttons */}
@@ -301,7 +302,7 @@ const AdvanceTab: React.FC = () => {
               onChange={(e) => setSelectedSite(e.target.value)}
               className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs font-bold text-slate-600 dark:text-slate-200 hover:text-indigo-600 transition-all cursor-pointer shadow-sm pr-10 appearance-none min-w-[160px]"
             >
-              <option value="All">All Site Locations</option>
+              <option value="All">{t('advAllSites')}</option>
               {uniqueSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -316,7 +317,7 @@ const AdvanceTab: React.FC = () => {
             onClick={handlePrintOverallHistory}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Printer className="w-4 h-4" /> Print Overall
+            <Printer className="w-4 h-4" /> {t('advPrintBulk')}
           </button>
 
           {/* Share Overall to WhatsApp */}
@@ -324,13 +325,13 @@ const AdvanceTab: React.FC = () => {
             onClick={handleWhatsAppOverallHistory}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Share2 className="w-4 h-4" /> Share Overall
+            <Share2 className="w-4 h-4" /> {t('advShareBulk')}
           </button>
 
           {/* Total Value Block */}
           <div className="bg-indigo-50 dark:bg-indigo-500/10 px-6 py-2.5 rounded-2xl flex items-center gap-4 border border-indigo-100 dark:border-indigo-500/20 shadow-sm">
             <div className="text-right">
-              <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">Total Value</p>
+              <p className="text-[10px] font-black uppercase tracking-widest text-indigo-400">{t('advTotalValue')}</p>
               <p className="text-sm font-black text-indigo-600 dark:text-indigo-400">₹ {(filteredBillRecords || []).reduce((sum, a) => sum + (a.amount || 0), 0).toLocaleString()}</p>
             </div>
             <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white shadow-md">
@@ -346,7 +347,7 @@ const AdvanceTab: React.FC = () => {
         
         <div className="flex items-center gap-3 mb-10 relative z-10">
           <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Add New Bill Record</h3>
+          <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('advAddNewBill')}</h3>
         </div>
 
         <form onSubmit={handleAddBill} className="relative z-10 space-y-8">
@@ -354,7 +355,7 @@ const AdvanceTab: React.FC = () => {
             {/* ID No - Trigger */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-indigo-600 flex items-center gap-2 ml-1">
-                <Hash className="w-3.5 h-3.5" /> Labour ID
+                <Hash className="w-3.5 h-3.5" /> {t('advWorkerID')}
               </label>
               <div className="relative">
                 <input
@@ -362,7 +363,7 @@ const AdvanceTab: React.FC = () => {
                   className="w-full bg-slate-50 dark:bg-slate-800 border-2 border-indigo-100 dark:border-indigo-900/30 rounded-xl p-4 text-sm font-black text-indigo-600 dark:text-indigo-400 focus:ring-4 focus:ring-indigo-500/10 transition-all shadow-inner outline-none"
                   value={formData.idNo}
                   onChange={e => setFormData(prev => ({ ...prev, idNo: e.target.value }))}
-                  placeholder="Labour ID (e.g. 001)"
+                  placeholder={t('advWorkerIDPlaceholder')}
                 />
                 {isFetchingAssignments && <Loader2 className="w-4 h-4 absolute right-4 top-4 animate-spin text-indigo-500" />}
               </div>
@@ -371,42 +372,42 @@ const AdvanceTab: React.FC = () => {
             {/* Labour Category */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-                <Briefcase className="w-3.5 h-3.5" /> Category
+                <Briefcase className="w-3.5 h-3.5" /> {t('advCategory')}
               </label>
               <input
                 type="text"
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
                 value={formData.category}
                 onChange={e => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                placeholder="Role"
+                placeholder={t('advRolePlaceholder')}
               />
             </div>
 
             {/* Name */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-                <UserCircle className="w-3.5 h-3.5" /> Name
+                <UserCircle className="w-3.5 h-3.5" /> {t('advName')}
               </label>
               <input
                 type="text"
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
                 value={formData.name}
                 onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                placeholder="Full Name"
+                placeholder={t('advFullNamePlaceholder')}
               />
             </div>
 
             {/* Site */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-                <MapPin className="w-3.5 h-3.5" /> Site Location
+                <MapPin className="w-3.5 h-3.5" /> {t('advSiteLocation')}
               </label>
               <input
                 type="text"
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
                 value={formData.siteName}
                 onChange={e => setFormData(prev => ({ ...prev, siteName: e.target.value }))}
-                placeholder="Site"
+                placeholder={t('advSitePlaceholder')}
               />
             </div>
           </div>
@@ -415,7 +416,7 @@ const AdvanceTab: React.FC = () => {
             {/* Date */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-                <Calendar className="w-3.5 h-3.5" /> Date
+                <Calendar className="w-3.5 h-3.5" /> {t('advDate')}
               </label>
               <input
                 type="date"
@@ -428,7 +429,7 @@ const AdvanceTab: React.FC = () => {
             {/* Amount */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-                <TrendingUp className="w-3.5 h-3.5" /> Amount (₹)
+                <TrendingUp className="w-3.5 h-3.5" /> {t('advAmount')}
               </label>
               <input
                 type="number"
@@ -442,7 +443,7 @@ const AdvanceTab: React.FC = () => {
             {/* Present State */}
             <div className="space-y-2">
               <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
-                <Clock className="w-3.5 h-3.5" /> Present State
+                <Clock className="w-3.5 h-3.5" /> {t('advCurrentStatus')}
               </label>
               <div className="relative group">
                 <select
@@ -450,8 +451,8 @@ const AdvanceTab: React.FC = () => {
                   value={formData.status}
                   onChange={e => setFormData(prev => ({ ...prev, status: e.target.value as "Settled" | "Pending" }))}
                 >
-                  <option value="Pending">Pending</option>
-                  <option value="Settled">Settled</option>
+                  <option value="Pending">{t('advPending')}</option>
+                  <option value="Settled">{t('advSettled')}</option>
                 </select>
                 <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400 pointer-events-none group-focus-within:rotate-180 transition-transform" />
               </div>
@@ -466,7 +467,7 @@ const AdvanceTab: React.FC = () => {
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
               <Plus className={`w-4 h-4 ${isAdding ? 'animate-spin' : 'group-hover:rotate-90'} transition-transform`} />
-              {isAdding ? "Adding Record..." : "Create Bill Record"}
+              {isAdding ? t('advAddingEntry') : t('advCreateBillEntry')}
             </button>
           </div>
         </form>
@@ -476,7 +477,7 @@ const AdvanceTab: React.FC = () => {
       <div className="bg-white dark:bg-slate-900/60 rounded-[2.5rem] border border-slate-100 dark:border-slate-800 shadow-xl overflow-hidden animate-slide-up">
         <div className="p-8 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/30">
           <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400 flex items-center gap-3">
-            <History className="w-4 h-4 text-indigo-500" /> Permanent Bill Records {selectedSite !== "All" ? `- ${selectedSite}` : ""}
+            <History className="w-4 h-4 text-indigo-500" /> {t('advPermanentBillRecords')} {selectedSite !== "All" ? `- ${selectedSite}` : ""}
           </h3>
           <button onClick={fetchAllData} className="p-2 hover:bg-indigo-50 rounded-lg transition-all">
             <Loader2 className={`w-4 h-4 text-indigo-400 ${isFetchingHistory ? 'animate-spin' : ''}`} />
@@ -487,13 +488,13 @@ const AdvanceTab: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Labour Detail</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Site</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Amount</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Actions</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('advWorkerDetail')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('advCategory')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('advSite')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('advDate')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">{t('advAmountTable')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('advStatus')}</th>
+                <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('advActions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -533,7 +534,7 @@ const AdvanceTab: React.FC = () => {
                     <td className="p-6 text-center">
                       <div className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest ${a.status === 'Settled' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
                         {a.status === 'Settled' ? <CheckCircle2 className="w-3 h-3" /> : <Clock className="w-3 h-3" />}
-                        {a.status}
+                        {a.status === 'Settled' ? t('advSettled') : t('advPending')}
                       </div>
                     </td>
                     <td className="p-6 text-center">
@@ -551,7 +552,7 @@ const AdvanceTab: React.FC = () => {
                   <td colSpan={7} className="p-20 text-center">
                     <div className="flex flex-col items-center gap-3">
                       <History className="w-10 h-10 text-slate-200" />
-                      <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-300">No bill records found in database</p>
+                      <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-300">{t('advNoBillRecords')}</p>
                     </div>
                   </td>
                 </tr>

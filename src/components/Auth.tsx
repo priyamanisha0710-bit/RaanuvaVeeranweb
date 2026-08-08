@@ -168,7 +168,7 @@ const Auth: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500"
+                className="absolute inset-y-0 right-0 flex items-center pr-2 text-gray-500"
               >
                 👁
               </button>

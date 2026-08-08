@@ -19,6 +19,7 @@ import axios from "axios";
 import { generateProfessionalPDF, shareToWhatsApp } from "../../lib/pdfReportGenerator";
 import { apiService } from "../../lib/api";
 import ActiveWorkforceSummary from "./ActiveWorkforceSummary";
+import { useLanguage } from "../../context/LanguageContext";
 
 // Proxied Base URL
 const API_BASE = import.meta.env.VITE_API_BASE_URL 
@@ -32,6 +33,7 @@ const CreateEngineerTab: React.FC = () => {
   const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [selectedSite, setSelectedSite] = useState<string>("All");
+  const { t } = useLanguage();
 
   // Extract unique site locations from the assignments
   const uniqueSites = Array.from(
@@ -344,10 +346,10 @@ const CreateEngineerTab: React.FC = () => {
             <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/20">
               <Briefcase className="w-6 h-6 text-white" />
             </div>
-            Project Registration
+            {t('ceTitle')}
           </h2>
           <p className="text-slate-500 dark:text-slate-400 mt-2 font-medium">
-            Initialize new site projects and assign workforce details with precision.
+            {t('ceSubtitle')}
           </p>
         </div>
 
@@ -360,7 +362,7 @@ const CreateEngineerTab: React.FC = () => {
               onChange={(e) => setSelectedSite(e.target.value)}
               className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl px-4 py-3 text-xs font-bold text-slate-600 dark:text-slate-200 hover:text-indigo-600 transition-all cursor-pointer shadow-sm pr-10 appearance-none min-w-[160px]"
             >
-              <option value="All">All Site Locations</option>
+              <option value="All">{t('ceAllSites')}</option>
               {uniqueSites.map((site) => (
                 <option key={site} value={site}>
                   {site}
@@ -375,7 +377,7 @@ const CreateEngineerTab: React.FC = () => {
             onClick={handlePrintOverall}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-200 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Printer className="w-4 h-4" /> Print Overall
+            <Printer className="w-4 h-4" /> {t('cePrintOverall')}
           </button>
 
           {/* Share Overall to WhatsApp */}
@@ -383,7 +385,7 @@ const CreateEngineerTab: React.FC = () => {
             onClick={handleWhatsAppOverall}
             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/30 hover:bg-emerald-600 hover:text-white dark:hover:bg-emerald-600 dark:hover:text-white transition-all font-bold text-xs uppercase tracking-widest shadow-sm"
           >
-            <Share2 className="w-4 h-4" /> Share Overall
+            <Share2 className="w-4 h-4" /> {t('ceShareOverall')}
           </button>
         </div>
       </div>
@@ -393,7 +395,7 @@ const CreateEngineerTab: React.FC = () => {
         <div className="bg-white dark:bg-slate-900/60 rounded-[2.5rem] p-8 md:p-10 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-black/20">
           <div className="flex items-center gap-2 mb-8">
             <div className="w-1.5 h-6 bg-indigo-600 rounded-full" />
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Core Information</h3>
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('ceCoreInfo')}</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -401,7 +403,7 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <UserCircle className="w-3.5 h-3.5" />
-                Entity Type
+                {t('ceType')}
               </label>
               <select
                 name="entityType"
@@ -409,8 +411,8 @@ const CreateEngineerTab: React.FC = () => {
                 onChange={handleChange}
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-indigo-500/20 transition-all cursor-pointer shadow-inner"
               >
-                <option value="Engineer">Engineer</option>
-                <option value="Contractor">Contractor</option>
+                <option value="Engineer">{t('ceEngineer')}</option>
+                <option value="Contractor">{t('ceContractor')}</option>
               </select>
             </div>
 
@@ -418,12 +420,12 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <FileText className="w-3.5 h-3.5" />
-                Name
+                {t('ceName')}
               </label>
               <input
                 type="text"
                 name="name"
-                placeholder="Enter Full Name"
+                placeholder={t('ceNamePlaceholder')}
                 value={formData.name}
                 onChange={handleChange}
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm font-bold text-slate-800 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
@@ -434,12 +436,12 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <MapPin className="w-3.5 h-3.5" />
-                Site Location
+                {t('ceSiteLocation')}
               </label>
               <input
                 type="text"
                 name="siteLocation"
-                placeholder="City, Area or Project Site"
+                placeholder={t('ceSiteLocationPlaceholder')}
                 value={formData.siteLocation}
                 onChange={handleChange}
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm font-bold text-slate-800 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
@@ -450,12 +452,12 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <FileText className="w-3.5 h-3.5" />
-                Description
+                {t('ceDescription')}
               </label>
               <input
                 type="text"
                 name="description"
-                placeholder="Brief Project Description"
+                placeholder={t('ceDescriptionPlaceholder')}
                 value={formData.description}
                 onChange={handleChange}
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm font-bold text-slate-800 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
@@ -468,7 +470,7 @@ const CreateEngineerTab: React.FC = () => {
         <div className="bg-white dark:bg-slate-900/60 rounded-[2.5rem] p-8 md:p-10 border border-slate-100 dark:border-slate-800 shadow-xl shadow-slate-200/20 dark:shadow-black/20">
           <div className="flex items-center gap-2 mb-8">
             <div className="w-1.5 h-6 bg-violet-600 rounded-full" />
-            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">Workforce Assignment</h3>
+            <h3 className="text-sm font-black uppercase tracking-[0.2em] text-slate-400">{t('ceLabourAssignment')}</h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -476,7 +478,7 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <Users className="w-3.5 h-3.5" />
-                Labour Type
+                {t('ceLabourType')}
               </label>
               <select
                 name="labourType"
@@ -484,11 +486,11 @@ const CreateEngineerTab: React.FC = () => {
                 onChange={handleChange}
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm font-bold text-slate-800 dark:text-white focus:ring-2 focus:ring-violet-500/20 transition-all cursor-pointer shadow-inner"
               >
-                <option value="Mason">Mason</option>
-                <option value="Helper">Helper</option>
-                <option value="Electrician">Electrician</option>
-                <option value="Plumber">Plumber</option>
-                <option value="Other">Other</option>
+                <option value="Mason">{t('ceMason')}</option>
+                <option value="Helper">{t('ceHelper')}</option>
+                <option value="Electrician">{t('ceElectrician')}</option>
+                <option value="Plumber">{t('cePlumber')}</option>
+                <option value="Other">{t('ceOther')}</option>
               </select>
             </div>
 
@@ -496,12 +498,12 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <FileText className="w-3.5 h-3.5" />
-                Labour Name
+                {t('ceLabourName')}
               </label>
               <input
                 type="text"
                 name="labourName"
-                placeholder="Full Name of Primary Labour"
+                placeholder={t('ceLabourNamePlaceholder')}
                 value={formData.labourName}
                 onChange={handleChange}
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm font-bold text-slate-800 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500/20 transition-all shadow-inner"
@@ -512,12 +514,12 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <FileText className="w-3.5 h-3.5" />
-                Labour ID
+                {t('ceLabourId')}
               </label>
               <input
                 type="text"
                 name="labourId"
-                placeholder="Enter Labour ID (e.g. W-101)"
+                placeholder={t('ceLabourIdPlaceholder')}
                 value={formData.labourId}
                 onChange={handleChange}
                 className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-2xl p-4 text-sm font-bold text-slate-800 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-inner"
@@ -528,7 +530,7 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <Calendar className="w-3.5 h-3.5" />
-                Work Commenced On
+                {t('ceWorkCommenced')}
               </label>
               <input
                 type="date"
@@ -543,7 +545,7 @@ const CreateEngineerTab: React.FC = () => {
             <div className="space-y-2">
               <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
                 <Calendar className="w-3.5 h-3.5" />
-                Work Till (Projected)
+                {t('ceWorkTill')}
               </label>
               <input
                 type="date"
@@ -559,12 +561,12 @@ const CreateEngineerTab: React.FC = () => {
           <div className="mt-8 space-y-2">
             <label className="text-xs font-black uppercase tracking-widest text-slate-500 flex items-center gap-2 ml-1">
               <MessageSquare className="w-3.5 h-3.5" />
-              Remarks
+              {t('ceRemarks')}
             </label>
             <textarea
               name="remarks"
               rows={3}
-              placeholder="Any specific instructions or notes..."
+              placeholder={t('ceRemarksPlaceholder')}
               value={formData.remarks}
               onChange={handleChange}
               className="w-full bg-slate-50 dark:bg-slate-800 border-none rounded-3xl p-6 text-sm font-bold text-slate-800 dark:text-white placeholder:text-slate-400 focus:ring-2 focus:ring-violet-500/20 transition-all shadow-inner resize-none"
@@ -585,7 +587,7 @@ const CreateEngineerTab: React.FC = () => {
             ) : (
               <Send className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             )}
-            {isSubmitting ? "Processing..." : "Submit Registration"}
+            {isSubmitting ? t('ceSubmitting') : t('ceSubmitRegistration')}
           </button>
         </div>
       </form>
@@ -598,7 +600,7 @@ const CreateEngineerTab: React.FC = () => {
               <Users className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
             </div>
             <h3 className="text-xl font-black text-slate-800 dark:text-white uppercase tracking-tight">
-              Recent Workforce Assignments {selectedSite !== "All" ? `- ${selectedSite}` : ""}
+              {t('ceRecentAssignments')} {selectedSite !== "All" ? `- ${selectedSite}` : ""}
             </h3>
           </div>
           {loading && <Loader2 className="w-5 h-5 text-indigo-500 animate-spin" />}
@@ -609,18 +611,18 @@ const CreateEngineerTab: React.FC = () => {
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="bg-slate-50/50 dark:bg-slate-800/30">
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Name & Site</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Labour</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Commenced On</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Remarks</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Action</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ceColNameSite')}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ceColLabour')}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ceColStartedDate')}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ceColRemarks')}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">{t('ceColStatus')}</th>
+                  <th className="p-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">{t('ceColAction')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredAssignments.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="p-10 text-center text-slate-400 font-medium italic">No assignments found</td>
+                    <td colSpan={6} className="p-10 text-center text-slate-400 font-medium italic">{t('ceNoAssignments')}</td>
                   </tr>
                 ) : (
                   filteredAssignments.slice().reverse().map((assignment: any) => (

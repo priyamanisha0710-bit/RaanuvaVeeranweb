@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Video, Upload, Trash2, Calendar, Clock, CheckCircle, Loader2, Plus, X, Edit2, Lock, PlayCircle, StopCircle, BarChart3, Users, Link } from "lucide-react";
 import { LiveClass } from "../../types";
+import { useLanguage } from "../../context/LanguageContext";
 import { localLiveClassService } from "../../lib/localLiveClassService";
 
 const RecordedClassTab: React.FC = () => {
+  const { t } = useLanguage();
   const [classes, setClasses] = useState<LiveClass[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -66,7 +68,7 @@ const RecordedClassTab: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formTitle || !formDate || !formTime || (!formVideoUrl && !editingId)) {
-      setStatusMsg("Please fill all required fields and provide a video URL.");
+      setStatusMsg(t("rcErrorFillRequired"));
       return;
     }
 
@@ -79,7 +81,7 @@ const RecordedClassTab: React.FC = () => {
     // 1. Prevent scheduling in the past (only for new classes)
     // Adding 15 minutes grace period in case time has just passed
     if (!editingId && newStart < Date.now() - 15 * 60000) {
-      setStatusMsg("Error: Cannot schedule a new class in the past.");
+      setStatusMsg(t("rcErrorPast"));
       return;
     }
     
@@ -94,7 +96,7 @@ const RecordedClassTab: React.FC = () => {
     });
     
     if (hasOverlap) {
-      setStatusMsg("Error: This time slot overlaps with an existing scheduled class.");
+      setStatusMsg(t("rcErrorOverlap"));
       return;
     }
 
@@ -107,7 +109,7 @@ const RecordedClassTab: React.FC = () => {
     }
 
     if (editingId) {
-      setStatusMsg("Updating class...");
+      setStatusMsg(t("rcUpdatingClass"));
       setUploading(true);
       try {
         const updatedClass = await localLiveClassService.update(editingId, {
@@ -120,7 +122,7 @@ const RecordedClassTab: React.FC = () => {
 
         setUploading(false);
         if (updatedClass) {
-          setStatusMsg("Class updated successfully!");
+          setStatusMsg(t("rcUpdateSuccess"));
           resetForm();
           setShowForm(false);
           fetchClasses();
@@ -136,7 +138,7 @@ const RecordedClassTab: React.FC = () => {
 
     setUploading(true);
     setUploadProgress(0);
-    setStatusMsg("Uploading video to server...");
+    setStatusMsg(t("rcUploadingToServer"));
 
     // Simulate progress for local storage
     const progressInterval = setInterval(() => {
@@ -163,12 +165,12 @@ const RecordedClassTab: React.FC = () => {
       setUploadProgress(0);
 
       if (newClass) {
-        setStatusMsg("Class created successfully!");
+        setStatusMsg(t("rcCreateSuccess"));
         resetForm();
         setShowForm(false);
         fetchClasses();
       } else {
-        setStatusMsg("Upload failed. Check console or server logs for details.");
+        setStatusMsg(t("rcUploadFailed"));
       }
 
       setTimeout(() => setStatusMsg(""), 3000);
@@ -229,7 +231,7 @@ const RecordedClassTab: React.FC = () => {
       actionStyle: "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20",
       onConfirm: async () => {
         setConfirmModal(null);
-        setStatusMsg("Starting class...");
+        setStatusMsg(t("rcStartingClass"));
         await localLiveClassService.forceStart(cls.id);
         fetchClasses();
         setTimeout(() => setStatusMsg(""), 3000);
@@ -246,7 +248,7 @@ const RecordedClassTab: React.FC = () => {
       actionStyle: "bg-orange-600 hover:bg-orange-700 shadow-orange-600/20",
       onConfirm: async () => {
         setConfirmModal(null);
-        setStatusMsg("Ending class...");
+        setStatusMsg(t("rcEndingClass"));
         await localLiveClassService.forceEnd(cls.id);
         fetchClasses();
         setTimeout(() => setStatusMsg(""), 3000);
@@ -283,12 +285,12 @@ const RecordedClassTab: React.FC = () => {
 
   const formatScheduled = (iso: string) => {
     const d = new Date(iso);
-    return d.toLocaleDateString("en-IN", {
+    return d.toLocaleDateString("ta-IN", {
       weekday: "short",
       year: "numeric",
       month: "short",
       day: "numeric",
-    }) + " at " + d.toLocaleTimeString("en-IN", {
+    }) + " " + d.toLocaleTimeString("ta-IN", {
       hour: "2-digit",
       minute: "2-digit",
       hour12: true,
@@ -322,7 +324,7 @@ const RecordedClassTab: React.FC = () => {
               <Video className="w-6 h-6 text-indigo-600" />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Total Classes</p>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{t("rcTotalClasses")}</p>
               <p className="text-2xl font-black text-slate-900">{dashboardStats.total_classes || dashboardStats.totalClasses || localTotalClasses}</p>
             </div>
           </div>
@@ -331,7 +333,7 @@ const RecordedClassTab: React.FC = () => {
               <Users className="w-6 h-6 text-emerald-600" />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Total Viewers</p>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{t("rcTotalViewers")}</p>
               <p className="text-2xl font-black text-slate-900">{dashboardStats.total_viewers || dashboardStats.totalViewers || 0}</p>
             </div>
           </div>
@@ -340,7 +342,7 @@ const RecordedClassTab: React.FC = () => {
               <PlayCircle className="w-6 h-6 text-orange-600" />
             </div>
             <div>
-              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">Live Now</p>
+              <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{t("rcLiveNow")}</p>
               <p className="text-2xl font-black text-slate-900">{dashboardStats.live_now || dashboardStats.liveNow || localLiveNow}</p>
             </div>
           </div>
@@ -352,10 +354,10 @@ const RecordedClassTab: React.FC = () => {
         <div>
           <h2 className="text-3xl font-black text-slate-900 mb-2 flex items-center gap-3">
             <Video className="w-8 h-8 text-indigo-600" />
-            Recorded Classes
+            {t("rcTitle")}
           </h2>
           <p className="text-slate-500 font-medium">
-            Upload and schedule recorded video classes for students.
+            {t("rcDesc")}
           </p>
         </div>
         <button
@@ -363,7 +365,7 @@ const RecordedClassTab: React.FC = () => {
           className="flex w-full md:w-auto items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-2xl font-bold text-sm transition-all shadow-lg shadow-indigo-600/20"
         >
           {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-          {showForm ? "Cancel" : "New Class"}
+          {showForm ? t("rcCancel") : t("rcNewClass")}
         </button>
       </div>
 
@@ -390,13 +392,13 @@ const RecordedClassTab: React.FC = () => {
             {/* Title */}
             <div className="md:col-span-2">
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-                Class Title *
+                {t("rcClassTitleLabel")}
               </label>
               <input
                 type="text"
                 value={formTitle}
                 onChange={(e) => setFormTitle(e.target.value)}
-                placeholder="e.g. Hindi Grammar Lesson 5"
+                placeholder={t("rcClassTitlePlaceholder")}
                 required
                 className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-400 focus:outline-none focus:border-indigo-600/30 focus:ring-4 focus:ring-indigo-600/5 transition-all"
               />
@@ -405,12 +407,12 @@ const RecordedClassTab: React.FC = () => {
             {/* Description */}
             <div className="md:col-span-2">
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-                Description
+                {t("rcClassDescLabel")}
               </label>
               <textarea
                 value={formDesc}
                 onChange={(e) => setFormDesc(e.target.value)}
-                placeholder="Brief description of the class..."
+                placeholder={t("rcClassDescPlaceholder")}
                 rows={2}
                 className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-400 focus:outline-none focus:border-indigo-600/30 focus:ring-4 focus:ring-indigo-600/5 transition-all resize-none"
               />
@@ -419,7 +421,7 @@ const RecordedClassTab: React.FC = () => {
             {/* Video Link */}
             <div className="md:col-span-2">
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-                Video URL *
+                {t("rcVideoUrlLabel")}
               </label>
               
               <div className="relative group">
@@ -430,12 +432,12 @@ const RecordedClassTab: React.FC = () => {
                   type="url"
                   value={formVideoUrl}
                   onChange={(e) => setFormVideoUrl(e.target.value)}
-                  placeholder="https://drive.google.com/file/d/... or direct stream link"
+                  placeholder={t("rcVideoUrlPlaceholder")}
                   className="w-full pl-12 pr-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 font-bold placeholder:text-slate-400 focus:outline-none focus:border-indigo-600/30 focus:ring-4 focus:ring-indigo-600/5 transition-all"
                 />
                 {formVideoUrl && formVideoUrl.includes("drive.google.com") && !formVideoUrl.includes("uc?export") && (
                   <p className="text-[10px] text-emerald-600 font-bold mt-2 ml-1">
-                    ✓ Google Drive link detected. It will be optimized for streaming automatically.
+                    {t("rcGoogleDriveDetected")}
                   </p>
                 )}
               </div>
@@ -445,7 +447,7 @@ const RecordedClassTab: React.FC = () => {
             <div>
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
                 <Calendar className="w-3 h-3 inline mr-1" />
-                Scheduled Date *
+                {t("rcScheduledDateLabel")}
               </label>
               <input
                 type="date"
@@ -460,7 +462,7 @@ const RecordedClassTab: React.FC = () => {
             <div>
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
                 <Clock className="w-3 h-3 inline mr-1" />
-                Scheduled Time *
+                {t("rcScheduledTimeLabel")}
               </label>
               <input
                 type="time"
@@ -474,7 +476,7 @@ const RecordedClassTab: React.FC = () => {
             {/* Duration */}
             <div className="md:col-span-2">
               <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-                Duration (Minutes)
+                {t("rcDurationLabel")}
               </label>
               <div className="relative">
                 <input
@@ -485,7 +487,7 @@ const RecordedClassTab: React.FC = () => {
                   placeholder="0"
                   className="w-full px-5 py-4 bg-slate-50 border-2 border-slate-100 rounded-2xl text-slate-900 font-bold focus:outline-none focus:border-indigo-600/30 focus:ring-4 focus:ring-indigo-600/5 transition-all"
                 />
-                <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 uppercase tracking-widest pointer-events-none">Mins</span>
+                <span className="absolute right-5 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 uppercase tracking-widest pointer-events-none">{t("rcMinutesSpan")}</span>
               </div>
             </div>
           </div>
@@ -496,7 +498,7 @@ const RecordedClassTab: React.FC = () => {
               <div className="flex items-center justify-between text-sm font-bold text-slate-600">
                 <span className="flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-indigo-600" />
-                  Uploading video...
+                  {t("rcUploadingVideo")}
                 </span>
                 <span>{uploadProgress}%</span>
               </div>
@@ -515,7 +517,7 @@ const RecordedClassTab: React.FC = () => {
             className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-slate-300 text-white px-8 py-4 rounded-2xl font-black text-lg shadow-xl shadow-indigo-600/20 transition-all active:scale-95 flex items-center justify-center gap-3"
           >
             {editingId ? <Edit2 className="w-5 h-5" /> : <Upload className="w-5 h-5" />}
-            {uploading ? "Saving..." : (editingId ? "Update Class" : "Upload & Schedule Class")}
+            {uploading ? t("rcSaving") : (editingId ? t("rcUpdateClass") : t("rcUploadSchedule"))}
           </button>
         </form>
       )}
@@ -525,13 +527,13 @@ const RecordedClassTab: React.FC = () => {
         {loading ? (
           <div className="p-12 text-center">
             <Loader2 className="w-8 h-8 animate-spin text-indigo-600 mx-auto mb-4" />
-            <p className="text-slate-500 font-medium">Loading classes...</p>
+            <p className="text-slate-500 font-medium">{t("rcLoadingClasses")}</p>
           </div>
         ) : classes.length === 0 ? (
           <div className="p-12 text-center">
             <Video className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-            <p className="text-slate-500 font-medium text-lg mb-2">No classes scheduled yet</p>
-            <p className="text-slate-400 text-sm">Click "New Class" to upload and schedule your first recorded class.</p>
+            <p className="text-slate-500 font-medium text-lg mb-2">{t("rcNoClassesScheduled")}</p>
+            <p className="text-slate-400 text-sm">{t("rcNoClassesDesc")}</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-100">
@@ -553,7 +555,7 @@ const RecordedClassTab: React.FC = () => {
                       </span>
                       {cls.duration_minutes && cls.duration_minutes > 0 && (
                         <span>
-                          {Math.floor(cls.duration_minutes)}m {Math.round((cls.duration_minutes - Math.floor(cls.duration_minutes)) * 60)}s
+                          {Math.floor(cls.duration_minutes)}{t("rcMins")} {Math.round((cls.duration_minutes - Math.floor(cls.duration_minutes)) * 60)}{t("rcSecs")}
                         </span>
                       )}
                     </div>
@@ -568,11 +570,11 @@ const RecordedClassTab: React.FC = () => {
                       : "bg-emerald-50 text-emerald-600 border-emerald-100"
                   }`}>
                     {getDisplayStatus(cls) === "scheduled" || getDisplayStatus(cls) === "UPCOMING" ? (
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3 inline" /> Scheduled</span>
+                      <span className="flex items-center gap-1"><Clock className="w-3 h-3 inline" /> {t("rcScheduledStatus")}</span>
                     ) : getDisplayStatus(cls) === "EXPIRED" ? (
-                      <span className="flex items-center gap-1"><Lock className="w-3 h-3 inline" /> Expired</span>
+                      <span className="flex items-center gap-1"><Lock className="w-3 h-3 inline" /> {t("rcExpiredStatus")}</span>
                     ) : (
-                      <span className="flex items-center gap-1"><CheckCircle className="w-3 h-3 inline" /> Completed</span>
+                      <span className="flex items-center gap-1"><CheckCircle className="w-3 h-3 inline" /> {t("rcCompletedStatus")}</span>
                     )}
                   </span>
                   <div className="flex items-center gap-1">

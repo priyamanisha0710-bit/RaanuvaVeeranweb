@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { UserPlus, Users, Search, Mail, Phone, Key, Plus, X, Loader2, CheckCircle2, Trash2 } from "lucide-react";
+import { useLanguage } from "../../context/LanguageContext";
 
 const API_BASE = "https://api.codingboss.in/military";
 
 export default function UserManagementTab() {
+  const { t } = useLanguage();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
@@ -148,8 +150,8 @@ export default function UserManagementTab() {
             <Users className="w-6 h-6 text-indigo-600" />
           </div>
           <div>
-            <h2 className="text-2xl font-black text-slate-900">User Management</h2>
-            <p className="text-slate-500 font-medium mt-1 text-sm">Create and manage student accounts</p>
+            <h2 className="text-2xl font-black text-slate-900">{t('umTitle')}</h2>
+            <p className="text-slate-500 font-medium mt-1 text-sm">{t('umSubtitle')}</p>
           </div>
         </div>
 
@@ -158,19 +160,19 @@ export default function UserManagementTab() {
           className="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:bg-indigo-700 transition-colors shadow-md shadow-indigo-600/20 active:scale-95"
         >
           <UserPlus className="w-5 h-5" />
-          Create New User
+          {t('umCreateNewUser')}
         </button>
       </div>
 
       {/* Users List (Recent) */}
       <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
         <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <h3 className="text-lg font-bold text-slate-900">All Registered Users</h3>
+          <h3 className="text-lg font-bold text-slate-900">{t('umAllUsers')}</h3>
           <div className="relative w-full sm:w-72">
             <Search className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search users..."
+              placeholder={t('umSearchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all text-sm font-medium"
@@ -183,18 +185,18 @@ export default function UserManagementTab() {
             <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
               <Users className="w-8 h-8 text-slate-300" />
             </div>
-            <h4 className="text-lg font-bold text-slate-900 mb-1">No users found</h4>
-            <p className="text-slate-500 max-w-sm">No registered users in the database yet.</p>
+            <h4 className="text-lg font-bold text-slate-900 mb-1">{t('umNoUsers')}</h4>
+            <p className="text-slate-500 max-w-sm">{t('umNoUsersDesc')}</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left">
               <thead className="bg-slate-50 text-slate-500 text-xs font-bold uppercase tracking-wider">
                 <tr>
-                  <th className="px-6 py-4">User Details</th>
-                  <th className="px-6 py-4">Contact Info</th>
-                  <th className="px-6 py-4">Status</th>
-                  <th className="px-6 py-4 text-right">Actions</th>
+                  <th className="px-6 py-4">{t('umTableDetails')}</th>
+                  <th className="px-6 py-4">{t('umTableContact')}</th>
+                  <th className="px-6 py-4">{t('umTableStatus')}</th>
+                  <th className="px-6 py-4 text-right">{t('umTableActions')}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -208,7 +210,7 @@ export default function UserManagementTab() {
                         <div>
                           <p className="font-bold text-slate-900">{user.username}</p>
                           <p className="text-xs text-slate-500">
-                            {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Unknown date'}
+                            {user.created_at ? new Date(user.created_at).toLocaleDateString() : t('umUnknownDate')}
                           </p>
                         </div>
                       </div>
@@ -228,14 +230,14 @@ export default function UserManagementTab() {
                     <td className="px-6 py-4">
                       <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-600 border border-emerald-100">
                         <CheckCircle2 className="w-3.5 h-3.5" />
-                        Active
+                        {t('umActive')}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-right">
                       <button
                         onClick={() => handleDeleteUser(user.id)}
                         className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"
-                        title="Delete User"
+                        title={t('umDeleteUser')}
                       >
                         <Trash2 className="w-5 h-5" />
                       </button>
@@ -257,7 +259,7 @@ export default function UserManagementTab() {
                 <div className="w-10 h-10 rounded-xl bg-indigo-100 flex items-center justify-center">
                   <UserPlus className="w-5 h-5 text-indigo-600" />
                 </div>
-                <h3 className="text-lg font-black text-slate-900">Create New User</h3>
+                <h3 className="text-lg font-black text-slate-900">{t("umModalTitle")}</h3>
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
@@ -269,7 +271,7 @@ export default function UserManagementTab() {
 
             <form onSubmit={handleSubmit} className="p-6 space-y-5">
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Username *</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">{t("umUsernameLabel")}</label>
                 <div className="relative">
                   <Users className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
@@ -278,13 +280,13 @@ export default function UserManagementTab() {
                     value={form.username}
                     onChange={handleChange}
                     className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium"
-                    placeholder="Enter username"
+                    placeholder={t("umUsernamePlaceholder")}
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Email Address</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">{t("umEmailLabel")}</label>
                 <div className="relative">
                   <Mail className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
@@ -299,7 +301,7 @@ export default function UserManagementTab() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Mobile Number</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">{t("umMobileLabel")}</label>
                 <div className="relative">
                   <Phone className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
@@ -313,7 +315,7 @@ export default function UserManagementTab() {
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-slate-700 mb-1.5">Password *</label>
+                <label className="block text-sm font-bold text-slate-700 mb-1.5">{t("umPasswordLabel")}</label>
                 <div className="relative">
                   <Key className="w-5 h-5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                   <input
@@ -334,7 +336,7 @@ export default function UserManagementTab() {
                   onClick={() => setIsModalOpen(false)}
                   className="flex-1 px-4 py-3 rounded-xl font-bold text-slate-600 bg-slate-100 hover:bg-slate-200 transition-colors"
                 >
-                  Cancel
+                  {t("umCancel")}
                 </button>
                 <button
                   type="submit"
@@ -346,7 +348,7 @@ export default function UserManagementTab() {
                   ) : (
                     <>
                       <Plus className="w-5 h-5" />
-                      Create User
+                      {t("umCreateBtn")}
                     </>
                   )}
                 </button>
