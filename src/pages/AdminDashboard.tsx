@@ -79,6 +79,25 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <nav className="p-3 md:p-5 flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-y-auto no-scrollbar">
+          {[
+            { id: "courses", label: t('tabCourses'), icon: Settings },
+            { id: "manpower", label: t('tabManpower'), icon: Briefcase },
+            { id: "workerDatabase", label: t('tabWorkerDatabase'), icon: Users },
+            { id: "live", label: t('tabLiveClass'), icon: Play },
+            { id: "recordedClasses", label: t('tabRecordedClasses'), icon: Video },
+            { id: "userManagement", label: t('tabUserManagement'), icon: UserPlus },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => { setActiveTab(item.id as any); navigate(`/admin-dashboard?tab=${item.id}`); }}
+              className={`flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group ${activeTab === item.id 
+                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-bold" 
+                : "text-slate-500 hover:bg-slate-50 hover:text-indigo-600 font-semibold"}`}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-sm">{item.label}</span>
+            </button>
+          ))}
           <button
             onClick={() => setLanguage(language === 'en' ? 'ta' : 'en')}
             className="flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group text-slate-500 hover:bg-slate-50 hover:text-indigo-600 font-semibold md:hidden"
@@ -100,25 +119,6 @@ const AdminDashboard: React.FC = () => {
             <LogOut className="w-5 h-5" />
             <span className="text-sm">{t('logout')}</span>
           </button>
-          {[
-            { id: "courses", label: t('tabCourses'), icon: Settings },
-            { id: "manpower", label: t('tabManpower'), icon: Briefcase },
-            { id: "workerDatabase", label: t('tabWorkerDatabase'), icon: Users },
-            { id: "live", label: t('tabLiveClass'), icon: Play },
-            { id: "recordedClasses", label: t('tabRecordedClasses'), icon: Video },
-            { id: "userManagement", label: t('tabUserManagement'), icon: UserPlus },
-          ].map((item) => (
-            <button
-              key={item.id}
-              onClick={() => { setActiveTab(item.id as any); navigate(`/admin-dashboard?tab=${item.id}`); }}
-              className={`flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group ${activeTab === item.id 
-                ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 font-bold" 
-                : "text-slate-500 hover:bg-slate-50 hover:text-indigo-600 font-semibold"}`}
-            >
-              <item.icon className="w-5 h-5" />
-              <span className="text-sm">{item.label}</span>
-            </button>
-          ))}
         </nav>
 
         <div className="hidden md:block p-6 border-t border-slate-100 bg-slate-50/50 space-y-2 mt-auto">

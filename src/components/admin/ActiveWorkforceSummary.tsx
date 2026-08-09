@@ -12,7 +12,13 @@ const ActiveWorkforceSummary: React.FC = () => {
       try {
         const backendList = await apiService.getWorkers().catch(() => []);
         const savedProfilesRaw = localStorage.getItem('worker_db');
-        const savedProfiles = savedProfilesRaw ? JSON.parse(savedProfilesRaw) : [];
+        let savedProfiles = [];
+        try {
+          const parsed = savedProfilesRaw ? JSON.parse(savedProfilesRaw) : [];
+          savedProfiles = Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          savedProfiles = [];
+        }
 
         let masonsCount = 0;
         let helpersCount = 0;

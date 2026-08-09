@@ -71,7 +71,8 @@ const CreateEngineerTab: React.FC = () => {
       const res = await axios.get(`${API_BASE}/workforce-assignments/`, {
         headers: { 'ngrok-skip-browser-warning': 'true' }
       });
-      setWorkforceAssignments(res.data);
+      const data = res.data;
+      setWorkforceAssignments(Array.isArray(data) ? data : (data?.results || []));
     } catch (err) {
       console.error("Error fetching assignments:", err);
     } finally {
