@@ -78,28 +78,31 @@ const AdminDashboard: React.FC = () => {
           </div>
         </div>
 
-        <nav className="p-3 md:p-5 flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-y-auto no-scrollbar">
+        <div className="flex md:hidden p-3 border-b border-slate-100 items-center justify-between gap-2 overflow-x-auto no-scrollbar">
           <button
             onClick={() => setLanguage(language === 'en' ? 'ta' : 'en')}
-            className="flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group text-slate-500 hover:bg-slate-50 hover:text-indigo-600 font-semibold md:hidden"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-slate-50 rounded-xl text-slate-600 hover:text-indigo-600 font-semibold text-xs"
           >
-            <Languages className="w-5 h-5" />
-            <span className="text-sm">{language === 'en' ? 'Tamil' : 'English'}</span>
+            <Languages className="w-4 h-4" />
+            <span>{language === 'en' ? 'Tamil' : 'English'}</span>
           </button>
           <button
             onClick={() => navigate("/")}
-            className="flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group text-slate-500 hover:bg-slate-50 hover:text-indigo-600 font-semibold md:hidden"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-slate-50 rounded-xl text-slate-600 hover:text-indigo-600 font-semibold text-xs"
           >
-            <Globe className="w-5 h-5" />
-            <span className="text-sm">{t('viewSite')}</span>
+            <Globe className="w-4 h-4" />
+            <span>{t('viewSite')}</span>
           </button>
           <button
             onClick={handleLogout}
-            className="flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group text-slate-500 hover:bg-slate-50 hover:text-rose-600 font-semibold md:hidden"
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-rose-50 rounded-xl text-rose-600 font-semibold text-xs"
           >
-            <LogOut className="w-5 h-5" />
-            <span className="text-sm">{t('logout')}</span>
+            <LogOut className="w-4 h-4" />
+            <span>{t('logout')}</span>
           </button>
+        </div>
+
+        <nav className="p-3 md:p-5 flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-y-auto no-scrollbar">
           {[
             { id: "courses", label: t('tabCourses'), icon: Settings },
             { id: "manpower", label: t('tabManpower'), icon: Briefcase },
