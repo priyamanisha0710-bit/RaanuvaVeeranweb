@@ -79,6 +79,27 @@ const AdminDashboard: React.FC = () => {
         </div>
 
         <nav className="p-3 md:p-5 flex flex-row md:flex-col space-x-2 md:space-x-0 md:space-y-1 overflow-x-auto md:overflow-y-auto no-scrollbar">
+          <button
+            onClick={() => setLanguage(language === 'en' ? 'ta' : 'en')}
+            className="flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group text-slate-500 hover:bg-slate-50 hover:text-indigo-600 font-semibold md:hidden"
+          >
+            <Languages className="w-5 h-5" />
+            <span className="text-sm">{language === 'en' ? 'Tamil' : 'English'}</span>
+          </button>
+          <button
+            onClick={() => navigate("/")}
+            className="flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group text-slate-500 hover:bg-slate-50 hover:text-indigo-600 font-semibold md:hidden"
+          >
+            <Globe className="w-5 h-5" />
+            <span className="text-sm">{t('viewSite')}</span>
+          </button>
+          <button
+            onClick={handleLogout}
+            className="flex-shrink-0 flex items-center gap-2 md:gap-4 px-4 py-2.5 md:px-5 md:py-3.5 rounded-xl md:rounded-2xl transition-colors duration-200 group text-slate-500 hover:bg-slate-50 hover:text-rose-600 font-semibold md:hidden"
+          >
+            <LogOut className="w-5 h-5" />
+            <span className="text-sm">{t('logout')}</span>
+          </button>
           {[
             { id: "courses", label: t('tabCourses'), icon: Settings },
             { id: "manpower", label: t('tabManpower'), icon: Briefcase },
@@ -139,7 +160,7 @@ const AdminDashboard: React.FC = () => {
 
         <div className="animate-fade-in">
           {activeTab === "courses" && (
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-x-auto">
               <table className="w-full text-left">
                 <thead className="bg-slate-50 text-slate-500 text-sm font-medium uppercase tracking-wider">
                   <tr>
